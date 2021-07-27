@@ -1,0 +1,9 @@
+.art/
+.backup/
+.config/
+.idea/
+.gradle/
+.private/
+.storage*/
+build/
+logs/
