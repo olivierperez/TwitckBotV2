@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -21,15 +25,17 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Onboarding(
-    onAuthorizationClicked: (port: Int, clientId: String, clientSecret: String) -> Unit
+    onAuthorizationClicked: (port: Int, clientId: String, clientSecret: String) -> Unit,
+    onGenerateClientCredentialsClicked: () -> Unit
 ) {
     var clientId by remember { mutableStateOf("") }
     var clientSecret by remember { mutableStateOf("") }
     var port by remember { mutableStateOf("9015") }
+    val scroll = rememberScrollState()
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().verticalScroll(scroll)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -64,12 +70,23 @@ fun Onboarding(
                     }
                 }
             )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text="OAuth Redirect URL: http://localhost:$port/oauth",
+                style = MaterialTheme.typography.caption
+            )
 
             Spacer(modifier = Modifier.height(30.dp))
-            OutlinedButton(
+            Button(
                 onClick = { onAuthorizationClicked(port.toInt(), clientId, clientSecret) }
             ) {
-                Text("Autoriser l'accès à Twitch")
+                Text("Authorize access to Twitch")
+            }
+
+            OutlinedButton(
+                onClick = { onGenerateClientCredentialsClicked() }
+            ) {
+                Text("Generate Client ID and Client secret")
             }
         }
     }
