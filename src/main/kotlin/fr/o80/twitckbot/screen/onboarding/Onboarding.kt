@@ -58,7 +58,11 @@ fun Onboarding(
                 value = port,
                 maxLines = 1,
                 label = { Text(text = "Authentication port") },
-                onValueChange = { port = it }
+                onValueChange = {
+                    if (it.matches("^\\d*$".toRegex()) && it.toInt() in 1..65535) {
+                        port = it
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.height(30.dp))
