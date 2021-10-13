@@ -47,6 +47,17 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
+    fun generateClientCredentials() {
+        val url = "https://dev.twitch.tv/console/apps/create"
+        if (Desktop.isDesktopSupported() &&
+            Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
+        ) {
+            Desktop.getDesktop().browse(URI(url))
+        } else {
+            System.err.println("System cannot open URL: $url")
+        }
+    }
+
     sealed interface UiState {
         object Loading : UiState
         object AuthenticationForm : UiState

@@ -52,6 +52,9 @@ class OnboardingComponent(
                     onAuthCompleted = onAuthentication,
                     onAuthFailed = { it.printStackTrace() }
                 )
+            },
+            onGenerateClientCredentialsClicked = {
+                viewModel.generateClientCredentials()
             }
         )
     }
