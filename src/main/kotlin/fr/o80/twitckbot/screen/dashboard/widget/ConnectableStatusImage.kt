@@ -13,12 +13,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.imageFromResource
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import fr.o80.twitckbot.OnClick
 import fr.o80.twitckbot.screen.dashboard.DashboardViewModel
@@ -64,7 +64,7 @@ private fun InnerStatusImage(
     onClick: OnClick? = null
 ) {
     Image(
-        painter = BitmapPainter(imageFromResource(connectableState.icon)),
+        painter = painterResource(connectableState.icon),
         contentDescription = contentDescription,
         modifier = Modifier
             .size(32.dp)
@@ -76,6 +76,7 @@ private fun InnerStatusImage(
 }
 
 @Composable
+@OptIn(ExperimentalComposeUiApi::class)
 private fun Modifier.applyOnClick(onClick: (() -> Unit)?): Modifier {
     var hover by remember { mutableStateOf(false) }
     val background by animateColorAsState(if (hover) Color(0x33000000) else Color(0x00000000))

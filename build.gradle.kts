@@ -3,10 +3,10 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.30"
-    kotlin("kapt") version "1.5.30"
-    kotlin("plugin.serialization") version "1.5.30"
-    id("org.jetbrains.compose") version "0.4.0"
+    kotlin("jvm") version "1.5.31"
+    kotlin("kapt") version "1.5.31"
+    kotlin("plugin.serialization") version "1.5.31"
+    id("org.jetbrains.compose") version "1.0.0-alpha4-build398"
 }
 
 group = "fr.o80.twitckbot"
@@ -40,8 +40,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.38.1")
-    kapt("com.google.dagger:dagger-compiler:2.38.1")
+    implementation("com.google.dagger:dagger:2.39.1")
+    kapt("com.google.dagger:dagger-compiler:2.39.1")
 
     // IRC
     implementation("pircbot:pircbot:1.5.0")
@@ -58,8 +58,8 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 compose.desktop {
