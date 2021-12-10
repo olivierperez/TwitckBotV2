@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.extensions.compose.jetbrains.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.animation.child.crossfade
-import com.arkivanov.decompose.push
-import com.arkivanov.decompose.router
-import com.arkivanov.decompose.statekeeper.Parcelable
+import com.arkivanov.decompose.router.push
+import com.arkivanov.decompose.router.router
+import com.arkivanov.essenty.parcelable.Parcelable
 import fr.o80.twitckbot.di.AuthenticatedComponent
 import fr.o80.twitckbot.di.DaggerRootComponent
 import fr.o80.twitckbot.di.RootComponent
