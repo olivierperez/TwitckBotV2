@@ -10,6 +10,7 @@ import fr.o80.twitckbot.system.bean.User
 import fr.o80.twitckbot.system.bean.ValidateResponse
 import fr.o80.twitckbot.system.bean.Video
 import fr.o80.twitckbot.service.log.LoggerFactory
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -23,7 +24,7 @@ import java.io.OutputStream
 import java.util.*
 import javax.inject.Inject
 
-private val twitchDeserializer = Json
+private val twitchDeserializer = Json { ignoreUnknownKeys = true }
 
 @SessionScope
 class TwitchApiImpl @Inject constructor(

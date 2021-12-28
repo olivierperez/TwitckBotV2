@@ -1,15 +1,26 @@
 package fr.o80.twitckbot.system.line
 
+import fr.o80.twitckbot.internal.emote.EmoteDownloader
+import fr.o80.twitckbot.service.log.LoggerFactory
+import fr.o80.twitckbot.system.bean.Command
 import fr.o80.twitckbot.system.bean.Viewer
+import fr.o80.twitckbot.system.command.CommandParser
+import fr.o80.twitckbot.system.event.BitsEvent
+import fr.o80.twitckbot.system.event.CommandEvent
+import fr.o80.twitckbot.system.event.EmotesEvent
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.MessageEvent
+import fr.o80.twitckbot.system.event.RewardEvent
 import javax.inject.Inject
 
 class PrivMsgLineInterpreter @Inject constructor(
     private val eventBus: EventBus,
-//    private val commandParser: CommandParser,
-//    private val emoteDownloader: EmoteDownloader
+    private val commandParser: CommandParser,
+    loggerFactory: LoggerFactory,
+    private val emoteDownloader: EmoteDownloader
 ) : LineInterpreter {
+
+    private val logger = loggerFactory.getLogger(PrivMsgLineInterpreter::class)
 
     private val regex =
         "^@([^ ]+) :([^!]+)![^@]+@[^.]+\\.tmi\\.twitch\\.tv PRIVMSG (#[^ ]+) :(.+)$".toRegex()
@@ -30,7 +41,7 @@ class PrivMsgLineInterpreter @Inject constructor(
             )
 
             eventBus.send(MessageEvent(channel, viewer, message))
-            /*val command = commandParser.parse(message)
+            val command = commandParser.parse(message)
 
             tags.bits?.let { bits ->
                 logger.debug("Bits have been detected: \n=>$viewer\n=>$tags\n===================")
@@ -52,61 +63,61 @@ class PrivMsgLineInterpreter @Inject constructor(
             when {
                 command != null -> dispatchCommand(channel, command, tags, viewer)
                 else -> dispatchMessage(channel, message, viewer)
-            }*/
+            }
         }
     }
 
-    /*private fun dispatchBits(
+    private suspend fun dispatchBits(
         channel: String,
         bits: Int,
         viewer: Viewer
     ) {
-        bitsDispatcher.dispatch(
-            BitsEvent(messenger, channel, bits, viewer)
+        eventBus.send(
+            BitsEvent(channel, bits, viewer)
         )
     }
 
-    private fun dispatchCommand(
+    private suspend fun dispatchCommand(
         channel: String,
         command: Command,
         tags: Tags,
         viewer: Viewer
     ) {
-        commandDispatcher.dispatch(
-            CommandEvent(messenger, channel, command, tags.bits, viewer)
+        eventBus.send(
+            CommandEvent(channel, command, tags.bits, viewer)
         )
     }
 
-    private fun dispatchEmotes(
+    private suspend fun dispatchEmotes(
         channel: String,
         emotes: List<String>,
         emoteOnly: Boolean,
         message: String,
         viewer: Viewer
     ) {
-        emotesDispatcher.dispatch(
-            EmotesEvent(messenger, channel, message, emotes, emoteOnly, viewer)
+        eventBus.send(
+            EmotesEvent(channel, message, emotes, emoteOnly, viewer)
         )
     }
 
-    private fun dispatchMessage(
+    private suspend fun dispatchMessage(
         channel: String,
         msg: String,
         viewer: Viewer
     ) {
-        messageDispatcher.dispatch(
-            MessageEvent(messenger, channel, msg, viewer)
+        eventBus.send(
+            MessageEvent(channel, viewer, msg)
         )
     }
 
-    private fun dispatchReward(
+    private suspend fun dispatchReward(
         channel: String,
         rewardId: String,
         message: String,
         viewer: Viewer
     ) {
-        rewardDispatcher.dispatch(
-            RewardEvent(messenger, channel, rewardId, message, viewer)
+        eventBus.send(
+            RewardEvent(channel, rewardId, message, viewer)
         )
-    }*/
+    }
 }

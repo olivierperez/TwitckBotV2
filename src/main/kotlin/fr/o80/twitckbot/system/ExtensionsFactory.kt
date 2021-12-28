@@ -8,6 +8,7 @@ import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.time.TimeCheckerFactory
 import fr.o80.twitckbot.service.twitch.TwitchApi
 import fr.o80.twitckbot.system.event.EventBus
+import fr.o80.twitckbot.system.step.StepsExecutor
 import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -19,7 +20,8 @@ class ExtensionsFactory @Inject constructor(
     private val eventBus: EventBus,
     private val twitchApi: TwitchApi,
     private val loggerFactory: LoggerFactory,
-    private val timeCheckerFactory: TimeCheckerFactory
+    private val timeCheckerFactory: TimeCheckerFactory,
+    private val stepsExecutor: StepsExecutor
 ) {
 
     suspend fun create(): List<Extension> =
@@ -46,6 +48,7 @@ class ExtensionsFactory @Inject constructor(
         Logger::class.createType() -> loggerFactory.getLogger(klass)
         TwitchApi::class.createType() -> twitchApi
         TimeCheckerFactory::class.createType() -> timeCheckerFactory
+        StepsExecutor::class.createType() -> stepsExecutor
         else -> error("Cannot inject parameter of type ${parameter.type}")
     }
 }

@@ -1,7 +1,11 @@
 package fr.o80.twitckbot.system.step
 
-/*interface StepsExecutor {
-    fun execute(
+import fr.o80.twitckbot.system.event.BitsEvent
+import fr.o80.twitckbot.system.event.CommandEvent
+import fr.o80.twitckbot.system.event.RewardEvent
+
+interface StepsExecutor {
+    suspend fun execute(
         steps: List<ActionStep>,
         params: StepParams
     )
@@ -39,4 +43,4 @@ class StepParams(
             )
         }
     }
-}*/
+}

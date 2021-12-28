@@ -12,6 +12,8 @@ import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.MessageEvent
 import fr.o80.twitckbot.system.event.SendMessageEvent
 import fr.o80.twitckbot.service.log.Logger
+import fr.o80.twitckbot.system.step.StepParams
+import fr.o80.twitckbot.system.step.StepsExecutor
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
@@ -21,7 +23,8 @@ class WelcomeExtension(
     private val eventBus: EventBus,
     private val twitchApi: TwitchApi,
     private val logger: Logger,
-    private val timeCheckerFactory: TimeCheckerFactory
+    private val timeCheckerFactory: TimeCheckerFactory,
+    private val stepsExecutor: StepsExecutor
 ) : Extension() {
 
     private val config: WelcomeConfiguration = readConfig("welcome.json")
@@ -69,9 +72,8 @@ class WelcomeExtension(
         } else {
             welcomeTimeChecker.executeIfNotCooldown(viewer.login) {
                 welcomeViewer(channel, viewer)
-                // TODO OPZ
-//                val stepParam = StepParams(config.channel.name, viewer.displayName, emptyList())
-//                stepsExecutor.execute(config.onWelcome, stepParam)
+                val stepParam = StepParams(config.channel.name, viewer.displayName)
+                stepsExecutor.execute(config.onWelcome, stepParam)
             }
         }
     }
