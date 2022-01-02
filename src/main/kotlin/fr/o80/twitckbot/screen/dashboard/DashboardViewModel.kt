@@ -4,7 +4,6 @@ import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.connectable.ConnectableStatus
 import fr.o80.twitckbot.system.ConnectablesManager
 import fr.o80.twitckbot.system.Extension
-import fr.o80.twitckbot.system.ExtensionsFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -24,7 +23,7 @@ import javax.inject.Inject
 @SessionScope
 class DashboardViewModel @Inject constructor(
     private val connectablesManager: ConnectablesManager,
-    private val extensionsFactory: ExtensionsFactory
+    private val extensions: @JvmSuppressWildcards Set<Extension>
 ) {
 
     sealed interface Effect {
@@ -38,7 +37,7 @@ class DashboardViewModel @Inject constructor(
         ) : Action
 
         class SetExtensions(
-            val extensions: List<Extension>
+            val extensions: Collection<Extension>
         ) : Action
 
         class UpdateConnectableStatus(
@@ -49,7 +48,7 @@ class DashboardViewModel @Inject constructor(
 
     data class State(
         val connectableStates: List<ConnectableState>,
-        val extensions: List<Extension>
+        val extensions: Collection<Extension>
     ) {
         companion object {
             val EMPTY = State(
@@ -135,7 +134,7 @@ class DashboardViewModel @Inject constructor(
             },
             flow {
                 try {
-                    emit(Action.SetExtensions(extensionsFactory.create()))
+                    emit(Action.SetExtensions(extensions))
                 } catch (e: Exception) {
                     // TODO OPZ Afficher ça dans le dashboard
                     e.printStackTrace()

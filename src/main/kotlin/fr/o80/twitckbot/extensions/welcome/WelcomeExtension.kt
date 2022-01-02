@@ -24,24 +24,26 @@ import javax.inject.Inject
 @SessionScope
 class WelcomeExtension @Inject constructor(
     private val eventBus: EventBus,
-    private val twitchApi: TwitchApi,
-    private val timeCheckerFactory: TimeCheckerFactory,
     private val stepsExecutor: StepsExecutor,
     loggerFactory: LoggerFactory,
+    timeCheckerFactory: TimeCheckerFactory,
+    twitchApi: TwitchApi,
 ) : Extension() {
 
     private val logger = loggerFactory.getLogger(WelcomeExtension::class.java.simpleName)
 
-    private val config: WelcomeConfiguration = readConfig("welcome.json")
+    private val config: WelcomeConfiguration
 
-    private val followers: List<Follower> by lazy {
-        twitchApi.getFollowers(config.streamId)
-    }
+    private val followers: List<Follower>
 
-    private lateinit var welcomeTimeChecker: TimeChecker
+    private val welcomeTimeChecker: TimeChecker
 
     init {
         logger.info("Initializing")
+
+        config = readConfig("welcome.json")
+
+        followers = twitchApi.getFollowers(config.streamId)
 
         welcomeTimeChecker = timeCheckerFactory.create(
             namespace = WelcomeExtension::class,
@@ -68,7 +70,7 @@ class WelcomeExtension @Inject constructor(
             return
         }
 
-        if (false && config.messages.forBroadcaster.isNotEmpty() && Badge.BROADCASTER in viewer.badges) {
+        if (config.messages.forBroadcaster.isNotEmpty() && Badge.BROADCASTER in viewer.badges) {
             welcomeTimeChecker.executeIfNotCooldown(viewer.login) {
                 val message = config.messages.forBroadcaster.random()
                     .replace("#USER#", viewer.displayName)

@@ -3,14 +3,13 @@ package fr.o80.twitckbot.internal.twitch
 import fr.o80.twitckbot.data.model.Auth
 import fr.o80.twitckbot.di.BroadcasterAuth
 import fr.o80.twitckbot.di.SessionScope
+import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.twitch.TwitchApi
 import fr.o80.twitckbot.system.bean.Channel
 import fr.o80.twitckbot.system.bean.Follower
 import fr.o80.twitckbot.system.bean.User
 import fr.o80.twitckbot.system.bean.ValidateResponse
 import fr.o80.twitckbot.system.bean.Video
-import fr.o80.twitckbot.service.log.LoggerFactory
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json

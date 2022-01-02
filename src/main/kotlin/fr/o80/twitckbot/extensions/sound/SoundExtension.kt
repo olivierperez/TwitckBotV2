@@ -14,12 +14,14 @@ class SoundExtension @Inject constructor(
 
     private val logger = loggerFactory.getLogger(SoundExtension::class.java.simpleName)
 
-    private val config: SoundConfiguration = readConfig("sound.json")
+    private val config: SoundConfiguration
 
-    private lateinit var soundPlayer: SoundPlayer
+    private var soundPlayer: SoundPlayer
 
     init {
         logger.info("Initializing")
+
+        config = readConfig("sound.json")
 
         val sounds = mutableMapOf<String, OneSound>().apply {
             config.custom.forEach { (id, oneSound) ->

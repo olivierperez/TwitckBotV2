@@ -9,7 +9,6 @@ import fr.o80.twitckbot.screen.dashboard.DashboardComponent
 @Subcomponent(modules = [
     AuthenticatedModule::class,
     AuthenticatedBindsModule::class,
-    ExtensionModule::class,
     ExtensionBindsModule::class
 ])
 interface AuthenticatedComponent {

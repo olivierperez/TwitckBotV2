@@ -1,6 +1,10 @@
 package fr.o80.twitckbot.service.twitch
 
-import fr.o80.twitckbot.system.bean.*
+import fr.o80.twitckbot.system.bean.Channel
+import fr.o80.twitckbot.system.bean.Follower
+import fr.o80.twitckbot.system.bean.User
+import fr.o80.twitckbot.system.bean.ValidateResponse
+import fr.o80.twitckbot.system.bean.Video
 import java.io.OutputStream
 
 interface TwitchApi {

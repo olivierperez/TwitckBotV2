@@ -19,10 +19,12 @@ class RepeatExtension @Inject constructor(
 
     private val logger = loggerFactory.getLogger(RepeatExtension::class.java.simpleName)
 
-    private val config: RepeatConfiguration = readConfig("repeat.json")
+    private val config: RepeatConfiguration
 
     init {
         logger.info("Initializing")
+
+        config = readConfig("repeat.json")
 
         val channel: String = config.channel.name
         val intervalBetweenRepeatedMessages: Duration =
