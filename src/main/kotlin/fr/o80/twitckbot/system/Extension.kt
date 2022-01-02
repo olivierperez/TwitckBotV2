@@ -8,6 +8,4 @@ abstract class Extension {
 
     protected val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    abstract suspend fun init()
-
 }

@@ -18,7 +18,7 @@ class SoundExtension @Inject constructor(
 
     private lateinit var soundPlayer: SoundPlayer
 
-    override suspend fun init() {
+    init {
         logger.info("Initializing")
 
         val sounds = mutableMapOf<String, OneSound>().apply {

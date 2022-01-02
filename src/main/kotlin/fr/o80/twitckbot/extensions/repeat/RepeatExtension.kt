@@ -21,7 +21,7 @@ class RepeatExtension @Inject constructor(
 
     private val config: RepeatConfiguration = readConfig("repeat.json")
 
-    override suspend fun init() {
+    init {
         logger.info("Initializing")
 
         val channel: String = config.channel.name

@@ -40,7 +40,7 @@ class WelcomeExtension @Inject constructor(
 
     private lateinit var welcomeTimeChecker: TimeChecker
 
-    override suspend fun init() {
+    init {
         logger.info("Initializing")
 
         welcomeTimeChecker = timeCheckerFactory.create(

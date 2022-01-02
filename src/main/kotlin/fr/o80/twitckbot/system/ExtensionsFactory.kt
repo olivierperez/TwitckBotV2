@@ -9,7 +9,6 @@ class ExtensionsFactory @Inject constructor(
     private val extensions: Extensions
 ) {
 
-    suspend fun create(): List<Extension> =
+    fun create(): List<Extension> =
         extensions.list
-            .onEach { extension -> extension.init() }
 }
