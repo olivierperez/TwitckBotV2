@@ -28,8 +28,8 @@ dependencies {
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.4.0")
 
     // Oauth: Ktor + OauthClient + HttpClient
-    implementation("io.ktor:ktor-server-core:1.6.6")
-    implementation("io.ktor:ktor-server-netty:1.6.6")
+    implementation("io.ktor:ktor-server-core:1.6.7")
+    implementation("io.ktor:ktor-server-netty:1.6.7")
     implementation("com.github.mazine:oauth2-client-kotlin:1.0.2")
     implementation("org.glassfish.jersey.media:jersey-media-moxy:2.33")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
@@ -39,14 +39,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.40.3")
-    kapt("com.google.dagger:dagger-compiler:2.40.3")
+    implementation("com.google.dagger:dagger:2.40.5")
+    kapt("com.google.dagger:dagger-compiler:2.40.5")
 
     // IRC
     implementation("pircbot:pircbot:1.5.0")
 
     // Log
-    implementation("ch.qos.logback:logback-classic:1.2.7")
+    implementation("ch.qos.logback:logback-classic:1.2.10")
 
     // Test
     testImplementation("io.mockk:mockk:1.12.1")
