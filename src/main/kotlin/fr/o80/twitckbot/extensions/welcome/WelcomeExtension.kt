@@ -68,7 +68,7 @@ class WelcomeExtension @Inject constructor(
             return
         }
 
-        if (config.messages.forBroadcaster.isNotEmpty() && Badge.BROADCASTER in viewer.badges) {
+        if (false && config.messages.forBroadcaster.isNotEmpty() && Badge.BROADCASTER in viewer.badges) {
             welcomeTimeChecker.executeIfNotCooldown(viewer.login) {
                 val message = config.messages.forBroadcaster.random()
                     .replace("#USER#", viewer.displayName)
@@ -77,7 +77,7 @@ class WelcomeExtension @Inject constructor(
         } else {
             welcomeTimeChecker.executeIfNotCooldown(viewer.login) {
                 welcomeViewer(channel, viewer)
-                val stepParam = StepParams(config.channel.name, viewer.displayName)
+                val stepParam = StepParams(config.channel.name, viewer)
                 stepsExecutor.execute(config.onWelcome, stepParam)
             }
         }

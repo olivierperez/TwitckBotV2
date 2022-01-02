@@ -9,7 +9,7 @@ class StepFormatter @Inject constructor() {
 
     fun format(input: String, params: StepParams): String =
         input
-            .formatFor(params.viewerName)
+            .formatFor(params.viewer.displayName)
             .formatWith(params.params)
             .formatWithBits(params.bits)
             .formatWithMessage(params.message)

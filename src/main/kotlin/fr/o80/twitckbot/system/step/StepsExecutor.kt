@@ -1,5 +1,6 @@
 package fr.o80.twitckbot.system.step
 
+import fr.o80.twitckbot.system.bean.Viewer
 import fr.o80.twitckbot.system.event.BitsEvent
 import fr.o80.twitckbot.system.event.CommandEvent
 import fr.o80.twitckbot.system.event.RewardEvent
@@ -13,7 +14,7 @@ interface StepsExecutor {
 
 class StepParams(
     val channel: String,
-    val viewerName: String,
+    val viewer: Viewer,
     val params: List<String> = emptyList(),
     val bits: Int? = null,
     val message: String? = null
@@ -22,7 +23,7 @@ class StepParams(
         fun fromCommand(commandEvent: CommandEvent, skipOptions: Int = 0): StepParams {
             return StepParams(
                 channel = commandEvent.channel,
-                viewerName = commandEvent.viewer.displayName,
+                viewer = commandEvent.viewer,
                 params = commandEvent.command.options.drop(skipOptions)
             )
         }
@@ -30,7 +31,7 @@ class StepParams(
         fun fromBits(bitsEvent: BitsEvent): StepParams {
             return StepParams(
                 channel = bitsEvent.channel,
-                viewerName = bitsEvent.viewer.displayName,
+                viewer = bitsEvent.viewer,
                 bits = bitsEvent.bits
             )
         }
@@ -38,7 +39,7 @@ class StepParams(
         fun fromReward(rewardEvent: RewardEvent) :StepParams {
             return StepParams(
                 channel = rewardEvent.channel,
-                viewerName = rewardEvent.viewer.displayName,
+                viewer = rewardEvent.viewer,
                 message = rewardEvent.message
             )
         }

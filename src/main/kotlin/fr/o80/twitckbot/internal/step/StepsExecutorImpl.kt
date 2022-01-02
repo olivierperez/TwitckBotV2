@@ -50,7 +50,7 @@ class StepsExecutorImpl @Inject constructor(
         val commandMessage = stepFormatter.format(step.command, params)
         val command = commandParser.parse(commandMessage)
             ?: throw IllegalArgumentException("Failed to convert ${step.command} to a valid command")
-        eventBus.send(CommandEvent(params.channel, command, bits = null, viewer = TODO()))
+        eventBus.send(CommandEvent(params.channel, command, bits = null, viewer = params.viewer))
     }
 
     private suspend fun send(
@@ -58,7 +58,7 @@ class StepsExecutorImpl @Inject constructor(
         params: StepParams
     ) {
         val message = stepFormatter.format(step.message, params)
-        eventBus.send(MessageEvent(params.channel, viewer = TODO(), message))
+        eventBus.send(MessageEvent(params.channel, viewer = params.viewer, message))
     }
 
     private suspend fun showPopup(
