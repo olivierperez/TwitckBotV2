@@ -1,20 +1,29 @@
 package fr.o80.twitckbot.extensions.repeat
 
+import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.system.Extension
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.SendMessageEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
+import javax.inject.Inject
 
-class RepeatExtension(
-    private val eventBus: EventBus
+@SessionScope
+class RepeatExtension @Inject constructor(
+    private val eventBus: EventBus,
+    loggerFactory: LoggerFactory,
 ) : Extension() {
+
+    private val logger = loggerFactory.getLogger(RepeatExtension::class.java.simpleName)
 
     private val config: RepeatConfiguration = readConfig("repeat.json")
 
     override suspend fun init() {
+        logger.info("Initializing")
+
         val channel: String = config.channel.name
         val intervalBetweenRepeatedMessages: Duration =
             Duration.ofSeconds(config.secondsBetweenRepeatedMessages)

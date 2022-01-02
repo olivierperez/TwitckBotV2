@@ -1,6 +1,8 @@
 package fr.o80.twitckbot.extensions.welcome
 
+import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.time.TimeChecker
 import fr.o80.twitckbot.service.time.TimeCheckerFactory
 import fr.o80.twitckbot.service.twitch.TwitchApi
@@ -11,21 +13,24 @@ import fr.o80.twitckbot.system.bean.Viewer
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.MessageEvent
 import fr.o80.twitckbot.system.event.SendMessageEvent
-import fr.o80.twitckbot.service.log.Logger
 import fr.o80.twitckbot.system.step.StepParams
 import fr.o80.twitckbot.system.step.StepsExecutor
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import java.time.Duration
+import javax.inject.Inject
 
-class WelcomeExtension(
+@SessionScope
+class WelcomeExtension @Inject constructor(
     private val eventBus: EventBus,
     private val twitchApi: TwitchApi,
-    private val logger: Logger,
     private val timeCheckerFactory: TimeCheckerFactory,
-    private val stepsExecutor: StepsExecutor
+    private val stepsExecutor: StepsExecutor,
+    loggerFactory: LoggerFactory,
 ) : Extension() {
+
+    private val logger = loggerFactory.getLogger(WelcomeExtension::class.java.simpleName)
 
     private val config: WelcomeConfiguration = readConfig("welcome.json")
 
@@ -36,7 +41,7 @@ class WelcomeExtension(
     private lateinit var welcomeTimeChecker: TimeChecker
 
     override suspend fun init() {
-        logger.info("Initializing WelcomeExtension")
+        logger.info("Initializing")
 
         welcomeTimeChecker = timeCheckerFactory.create(
             namespace = WelcomeExtension::class,

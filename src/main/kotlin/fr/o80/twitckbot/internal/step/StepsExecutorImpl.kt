@@ -2,6 +2,7 @@ package fr.o80.twitckbot.internal.step
 
 import fr.o80.twitckbot.service.log.Logger
 import fr.o80.twitckbot.service.log.LoggerFactory
+import fr.o80.twitckbot.service.sound.Sound
 import fr.o80.twitckbot.system.command.CommandParser
 import fr.o80.twitckbot.system.event.CommandEvent
 import fr.o80.twitckbot.system.event.EventBus
@@ -21,7 +22,7 @@ class StepsExecutorImpl @Inject constructor(
     private val stepFormatter: StepFormatter,
     private val eventBus: EventBus,
 //    private val overlay: OverlayExtension?,
-//    private val sound: SoundExtension?,
+    private val sound: Sound?,
     loggerFactory: LoggerFactory
 ) : StepsExecutor {
 
@@ -85,11 +86,11 @@ class StepsExecutorImpl @Inject constructor(
     }
 
     private fun play(step: SoundStep) {
-        /*if (sound == null) {
+        if (sound == null) {
             logger.error("Sound steps require Sound extension to work")
         } else {
             sound.play(step.soundId)
-        }*/
+        }
     }
 
 }

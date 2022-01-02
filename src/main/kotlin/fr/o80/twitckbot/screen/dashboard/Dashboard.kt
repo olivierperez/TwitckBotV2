@@ -46,7 +46,10 @@ fun Dashboard(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Extension chargées : ${state.extensions.size}")
+            Text("Extensions chargées")
+            state.extensions.forEach { extension ->
+                Text(extension::class.java.simpleName)
+            }
         }
     }
 }

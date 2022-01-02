@@ -8,7 +8,9 @@ import fr.o80.twitckbot.screen.dashboard.DashboardComponent
 @SessionScope
 @Subcomponent(modules = [
     AuthenticatedModule::class,
-    AuthenticatedBindsModule::class
+    AuthenticatedBindsModule::class,
+    ExtensionModule::class,
+    ExtensionBindsModule::class
 ])
 interface AuthenticatedComponent {
 
