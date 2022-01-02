@@ -1,0 +1,116 @@
+package fr.o80.twitckbot.extensions.shootout
+
+import fr.o80.twitckbot.di.SessionScope
+import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.log.LoggerFactory
+import fr.o80.twitckbot.service.sound.Sound
+import fr.o80.twitckbot.service.storage.Storage
+import fr.o80.twitckbot.service.time.TimeChecker
+import fr.o80.twitckbot.service.time.TimeCheckerFactory
+import fr.o80.twitckbot.service.twitch.TwitchApi
+import fr.o80.twitckbot.system.Extension
+import fr.o80.twitckbot.system.bean.Video
+import fr.o80.twitckbot.system.event.CommandEvent
+import fr.o80.twitckbot.system.event.EventBus
+import fr.o80.twitckbot.system.event.MessageEvent
+import fr.o80.twitckbot.system.event.SendMessageEvent
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.Instant
+import javax.inject.Inject
+
+@SessionScope
+class ShootoutExtension @Inject constructor(
+    private val eventBus: EventBus,
+    private val twitchApi: TwitchApi,
+    loggerFactory: LoggerFactory,
+    sound: Sound,
+    storage: Storage,
+    timeCheckerFactory: TimeCheckerFactory
+//    help: HelpExtension?
+) : Extension() {
+
+    private val logger = loggerFactory.getLogger(ShootoutExtension::class.java.simpleName)
+
+    private val config: ShootoutConfiguration
+
+    private val promotionTimeChecker: TimeChecker
+
+    private val command: ShootoutCommand
+
+    init {
+        logger.info("Initializing")
+//        help?.registerCommand(SHOUT_OUT_COMMAND)
+
+        config = readConfig("shootout.json")
+
+        promotionTimeChecker = timeCheckerFactory.create(
+            namespace = ShootoutExtension::class,
+            "promotedAt",
+            Duration.ofSeconds(config.secondsBetweenTwoPromotions)
+        )
+
+        command = ShootoutCommand(
+            config,
+            storage,
+            sound,
+            eventBus
+        )
+
+        scope.launch {
+            eventBus.events.filterIsInstance<MessageEvent>().collect { event ->
+                interceptMessageEvent(event)
+            }
+        }
+        scope.launch {
+            eventBus.events.filterIsInstance<CommandEvent>().collect { event ->
+                command.interceptCommandEvent(event)
+            }
+        }
+        // TODO Command Whispering
+        /*scope.launch {
+            eventBus.events.filterIsInstance<WhisperingCommandEvent>().collect { event ->
+                command.interceptWhisperCommandEvent(event)
+            }
+        }*/
+    }
+
+    private suspend fun interceptMessageEvent(messageEvent: MessageEvent): MessageEvent {
+        if (config.channel.name != messageEvent.channel)
+            return messageEvent
+
+        if (messageEvent.viewer.login in config.ignoredLogins) {
+            return messageEvent
+        }
+
+        promotionTimeChecker.executeIfNotCooldown(messageEvent.viewer.login) {
+            promoteViewer(messageEvent)
+        }
+
+        return messageEvent
+    }
+
+    private suspend fun promoteViewer(messageEvent: MessageEvent) {
+        val lastVideo = twitchApi.getVideos(messageEvent.viewer.userId, 1)
+            .filter {
+                (it.publishedAt.toInstant() + Duration.ofDays(config.daysSinceLastVideoToPromote)).isAfter(
+                    Instant.now()
+                )
+            }
+            .takeIf { it.isNotEmpty() }
+            ?.first()
+            ?: return
+
+        val randomMessage = config.promotionMessages.random().formatViewer(messageEvent, lastVideo)
+        // TODO Handle CoolDown instead of call below -> messenger.sendWhenAvailable(messageEvent.channel, randomMessage, Importance.HIGH)
+        eventBus.send(SendMessageEvent(messageEvent.channel, randomMessage))
+    }
+
+    private fun String.formatViewer(messageEvent: MessageEvent, video: Video): String =
+        this.replace("#USER#", messageEvent.viewer.displayName)
+            .replace("#URL#", video.url)
+            .replace("#GAME#", video.game)
+
+}

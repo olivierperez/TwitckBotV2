@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
 import fr.o80.twitckbot.extensions.repeat.RepeatExtension
+import fr.o80.twitckbot.extensions.shootout.ShootoutExtension
 import fr.o80.twitckbot.extensions.sound.SoundExtension
 import fr.o80.twitckbot.extensions.welcome.WelcomeExtension
 import fr.o80.twitckbot.service.sound.Sound
@@ -25,4 +26,8 @@ interface ExtensionBindsModule {
     @Binds
     @IntoSet
     fun bindWelcomeExtension(impl: WelcomeExtension): Extension
+
+    @Binds
+    @IntoSet
+    fun bindViewerPromotionExtension(impl: ShootoutExtension): Extension
 }
