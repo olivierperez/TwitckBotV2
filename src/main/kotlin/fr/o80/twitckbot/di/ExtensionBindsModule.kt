@@ -3,10 +3,12 @@ package fr.o80.twitckbot.di
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
+import fr.o80.twitckbot.extensions.points.PointsExtension
 import fr.o80.twitckbot.extensions.repeat.RepeatExtension
 import fr.o80.twitckbot.extensions.shootout.ShootoutExtension
 import fr.o80.twitckbot.extensions.sound.SoundExtension
 import fr.o80.twitckbot.extensions.welcome.WelcomeExtension
+import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.sound.Sound
 import fr.o80.twitckbot.system.Extension
 
@@ -14,6 +16,13 @@ import fr.o80.twitckbot.system.Extension
 interface ExtensionBindsModule {
     @Binds
     fun bindSound(impl: SoundExtension): Sound
+
+    @Binds
+    fun bindPoints(impl: PointsExtension): Points
+
+    @Binds
+    @IntoSet
+    fun bindPointsExtension(impl: PointsExtension): Extension
 
     @Binds
     @IntoSet
@@ -25,9 +34,9 @@ interface ExtensionBindsModule {
 
     @Binds
     @IntoSet
-    fun bindWelcomeExtension(impl: WelcomeExtension): Extension
+    fun bindViewerPromotionExtension(impl: ShootoutExtension): Extension
 
     @Binds
     @IntoSet
-    fun bindViewerPromotionExtension(impl: ShootoutExtension): Extension
+    fun bindWelcomeExtension(impl: WelcomeExtension): Extension
 }

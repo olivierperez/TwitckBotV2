@@ -1,4 +1,4 @@
-package fr.o80.twitckbot
+package fr.o80.twitckbot.utils
 
 typealias OnClick = () -> Unit
 

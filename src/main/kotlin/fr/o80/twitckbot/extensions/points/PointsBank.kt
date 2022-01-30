@@ -1,0 +1,57 @@
+package fr.o80.twitckbot.extensions.points
+
+import fr.o80.twitckbot.service.storage.Storage
+import fr.o80.twitckbot.utils.tryToInt
+import javax.inject.Inject
+
+class PointsBank @Inject constructor(
+    private val storage: Storage
+) {
+
+    private val namespace: String = PointsExtension::class.java.name
+
+    private val lock = Any()
+
+    fun getPoints(login: String): Int =
+        storage.getPoints(login)
+
+    fun addPoints(login: String, points: Int) {
+        synchronized(lock) {
+            val currentPoints = storage.getPoints(login)
+            val newPoints = currentPoints + points
+            storage.putPoints(login, newPoints)
+        }
+    }
+
+    fun removePoints(login: String, points: Int): Boolean =
+        synchronized(lock) {
+            if (canConsume(login, points)) {
+                val currentPoints = storage.getPoints(login)
+                val newPoints = currentPoints - points
+                storage.putPoints(login, newPoints)
+                true
+            } else {
+                false
+            }
+        }
+
+    fun transferPoints(fromLogin: String, toLogin: String, points: Int): Boolean =
+        synchronized(lock) {
+            if (canConsume(fromLogin, points)) {
+                removePoints(fromLogin, points)
+                addPoints(toLogin, points)
+                true
+            } else {
+                false
+            }
+        }
+
+    private fun canConsume(login: String, points: Int): Boolean =
+        storage.getPoints(login) >= points
+
+    private fun Storage.getPoints(login: String) =
+        getUserInfo(login, namespace, "balance").tryToInt() ?: 0
+
+    private fun Storage.putPoints(login: String, points: Int) =
+        putUserInfo(login, namespace, "balance", points.toString())
+}

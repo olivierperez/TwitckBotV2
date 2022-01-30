@@ -3,6 +3,7 @@ package fr.o80.twitckbot.extensions.shootout
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
 import fr.o80.twitckbot.service.log.LoggerFactory
+import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.sound.Sound
 import fr.o80.twitckbot.service.storage.Storage
 import fr.o80.twitckbot.service.time.TimeChecker
@@ -26,10 +27,12 @@ class ShootoutExtension @Inject constructor(
     private val eventBus: EventBus,
     private val twitchApi: TwitchApi,
     loggerFactory: LoggerFactory,
+    points: Points,
     sound: Sound,
     storage: Storage,
     timeCheckerFactory: TimeCheckerFactory
-//    help: HelpExtension?
+    // TODO Help
+    // help: HelpExtension?
 ) : Extension() {
 
     private val logger = loggerFactory.getLogger(ShootoutExtension::class.java.simpleName)
@@ -56,6 +59,7 @@ class ShootoutExtension @Inject constructor(
             config,
             storage,
             sound,
+            points,
             eventBus
         )
 

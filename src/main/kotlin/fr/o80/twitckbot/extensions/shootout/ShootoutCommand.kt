@@ -1,5 +1,6 @@
 package fr.o80.twitckbot.extensions.shootout
 
+import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.sound.Sound
 import fr.o80.twitckbot.service.storage.Storage
 import fr.o80.twitckbot.system.event.CommandEvent
@@ -14,7 +15,7 @@ class ShootoutCommand(
     private val config: ShootoutConfiguration,
     private val storage: Storage,
     private val sound: Sound,
-//    private val points: PointsExtension?,
+    private val points: Points?, // TODO Rendre Points désactivable plutôt que nullable
     private val eventBus: EventBus
 ) {
 
@@ -60,13 +61,12 @@ class ShootoutCommand(
             return
         }
 
-        // TODO Points
-        /*if (points != null && !points.consumePoints(viewerLogin, RECORDING_COST)) {
-            val errorMessage = i18n.noPointsEnough.replace("#USER#", viewerLogin)
-            eventBus.send(SendMessageEvent(channel, errorMessage))
+        if (points != null && !points.consumePoints(viewerLogin, RECORDING_COST)) {
+            val errorMessage = config.i18n.noPointsEnough.replace("#USER#", viewerLogin)
+            eventBus.send(SendMessageEvent(commandEvent.channel, errorMessage))
             sound.playNegative()
             return
-        }*/
+        }
 
         if (storage.hasUserInfo(shootoutLogin)) {
             storage.putUserInfo(shootoutLogin, namespace, SHOOTOUT_COMMAND, message)
@@ -85,13 +85,11 @@ class ShootoutCommand(
             return
         }
 
-        // TODO Points
-        /*
         if (points != null && !points.consumePoints(viewerLogin, SHOOTOUT_COST)) {
-            val message = i18n.noPointsEnough.replace("#USER#", viewerLogin)
-            eventBus.send(SendMessageEvent(channel, message))
+            val message = config.i18n.noPointsEnough.replace("#USER#", viewerLogin)
+            eventBus.send(SendMessageEvent(commandEvent.channel, message))
             return
-        }*/
+        }
 
         if (storage.hasUserInfo(shootoutLogin)) {
             storage.getUserInfo(shootoutLogin, namespace, SHOOTOUT_COMMAND)?.let { message ->

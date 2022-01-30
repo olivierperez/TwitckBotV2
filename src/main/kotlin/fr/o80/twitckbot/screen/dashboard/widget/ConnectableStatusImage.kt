@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import fr.o80.twitckbot.OnClick
+import fr.o80.twitckbot.utils.OnClick
 import fr.o80.twitckbot.screen.dashboard.DashboardViewModel
 import fr.o80.twitckbot.service.connectable.ConnectableStatus
 

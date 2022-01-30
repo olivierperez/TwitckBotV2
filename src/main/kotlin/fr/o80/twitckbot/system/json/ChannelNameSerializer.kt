@@ -1,6 +1,6 @@
 package fr.o80.twitckbot.system.json
 
-import fr.o80.twitckbot.addPrefix
+import fr.o80.twitckbot.utils.addPrefix
 import fr.o80.twitckbot.system.bean.ChannelName
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

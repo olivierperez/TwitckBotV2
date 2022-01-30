@@ -1,5 +1,6 @@
 package fr.o80.twitckbot.service.log
 
+import fr.o80.twitckbot.system.bean.Command
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -19,9 +20,9 @@ private class Slf4jLoggerAdapter(name: String) : Logger {
     private val slf4jLogger: org.slf4j.Logger =
         org.slf4j.LoggerFactory.getLogger(name)
 
-//    override fun command(command: Command, message: String) {
-//        slf4jLogger.debug("[Command:${command.tag}] $message")
-//    }
+    override fun command(command: Command, message: String) {
+        slf4jLogger.debug("[Command:${command.tag}] $message")
+    }
 
     override fun trace(message: String) {
         slf4jLogger.trace(message)
