@@ -1,22 +1,22 @@
-package fr.o80.twitckbot.extensions.shootout
+package fr.o80.twitckbot.extensions.shoutout
 
 import fr.o80.twitckbot.system.bean.ChannelName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class ShootoutConfiguration(
+class ShoutOutConfiguration(
     val channel: ChannelName,
     val secondsBetweenTwoPromotions: Long,
     val daysSinceLastVideoToPromote: Long,
     val ignoredLogins: List<String>,
     val promotionMessages: List<String>,
-    val i18n: ShootoutI18n
+    val i18n: ShoutOutI18n
 )
 
 @Serializable
-class ShootoutI18n(
+class ShoutOutI18n(
     val usage: String,
     val noPointsEnough: String,
-    val noAutoShootout: String,
-    val shootoutRecorded: String,
+    val noAutoShoutOut: String,
+    val shoutOutRecorded: String,
 )

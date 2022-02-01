@@ -1,4 +1,4 @@
-package fr.o80.twitckbot.extensions.shootout
+package fr.o80.twitckbot.extensions.shoutout
 
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
@@ -23,7 +23,7 @@ import java.time.Instant
 import javax.inject.Inject
 
 @SessionScope
-class ShootoutExtension @Inject constructor(
+class ShoutOutExtension @Inject constructor(
     private val eventBus: EventBus,
     private val twitchApi: TwitchApi,
     loggerFactory: LoggerFactory,
@@ -35,27 +35,27 @@ class ShootoutExtension @Inject constructor(
     // help: HelpExtension?
 ) : Extension() {
 
-    private val logger = loggerFactory.getLogger(ShootoutExtension::class.java.simpleName)
+    private val logger = loggerFactory.getLogger(ShoutOutExtension::class.java.simpleName)
 
-    private val config: ShootoutConfiguration
+    private val config: ShoutOutConfiguration
 
     private val promotionTimeChecker: TimeChecker
 
-    private val command: ShootoutCommand
+    private val command: ShoutOutCommand
 
     init {
         logger.info("Initializing")
 //        help?.registerCommand(SHOUT_OUT_COMMAND)
 
-        config = readConfig("shootout.json")
+        config = readConfig("shout_out.json")
 
         promotionTimeChecker = timeCheckerFactory.create(
-            namespace = ShootoutExtension::class,
+            namespace = ShoutOutExtension::class,
             "promotedAt",
             Duration.ofSeconds(config.secondsBetweenTwoPromotions)
         )
 
-        command = ShootoutCommand(
+        command = ShoutOutCommand(
             config,
             storage,
             sound,
