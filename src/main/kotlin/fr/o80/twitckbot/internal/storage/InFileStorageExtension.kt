@@ -8,7 +8,10 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.inject.Inject
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 private val storageSerializer = Json {
     prettyPrint = true
@@ -29,7 +32,7 @@ class InFileStorageExtension @Inject constructor(
     private val outputDirectory = File(".storage/")
     private val usersDirectory = File(outputDirectory, "users")
 
-    private val lock = Any()
+    private val lock = ReentrantReadWriteLock()
 
     init {
         if (!outputDirectory.exists())
@@ -42,35 +45,45 @@ class InFileStorageExtension @Inject constructor(
     }
 
     override fun hasUserInfo(login: String): Boolean {
-        logger.trace("Check if user info exists $login")
-        val userFile = getUserFile(login)
-        return userFile.isFile
+        lock.read {
+            logger.trace("Check if user info exists $login")
+            val userFile = getUserFile(login)
+            return userFile.isFile
+        }
     }
 
     override fun putUserInfo(login: String, namespace: String, key: String, value: String) {
-        logger.trace("Putting user info into $login [$namespace//$key] => $value")
-        with(getOrCreateUser(login)) {
-            putExtra("$namespace//$key", value)
-            save(this)
+        lock.write {
+            logger.trace("Putting user info into $login [$namespace//$key] => $value")
+            with(getOrCreateUser(login)) {
+                putExtra("$namespace//$key", value)
+                save(this)
+            }
         }
     }
 
     override fun getUserInfo(login: String, namespace: String, key: String): String? {
-        logger.trace("Getting user info of $login [$namespace//$key]")
-        return getOrCreateUser(login).getExtra("$namespace//$key")
+        lock.read {
+            logger.trace("Getting user info of $login [$namespace//$key]")
+            return getOrCreateUser(login).getExtra("$namespace//$key")
+        }
     }
 
     override fun putGlobalInfo(namespace: String, key: String, value: String) {
-        logger.trace("Putting info into [$namespace//$key] => $value")
-        with(getOrCreateGlobal()) {
-            putExtra(namespace, key, value)
-            save(this)
+        lock.write {
+            logger.trace("Putting info into [$namespace//$key] => $value")
+            with(getOrCreateGlobal()) {
+                putExtra(namespace, key, value)
+                save(this)
+            }
         }
     }
 
     override fun getGlobalInfo(namespace: String): List<Pair<String, String>> {
-        logger.trace("Getting all info [$namespace]")
-        return getOrCreateGlobal().getExtras(namespace)
+        lock.read {
+            logger.trace("Getting all info [$namespace]")
+            return getOrCreateGlobal().getExtras(namespace)
+        }
     }
 
     override fun getPathOf(path: String, file: String): File {
@@ -91,17 +104,15 @@ class InFileStorageExtension @Inject constructor(
 
     private fun save(global: Global) {
         logger.trace("Saving global...")
-        synchronized(lock) {
-            try {
-                val globalFile = getGlobalFile()
-                val globalJson = storageSerializer.encodeToString(global)
-                globalFile.writer().use {
-                    it.write(globalJson)
-                }
-                logger.trace("Global saved")
-            } catch (e: Exception) {
-                logger.error("Failed to save", e)
+        try {
+            val globalFile = getGlobalFile()
+            val globalJson = storageSerializer.encodeToString(global)
+            globalFile.writer().use {
+                it.write(globalJson)
             }
+            logger.trace("Global saved")
+        } catch (e: Exception) {
+            logger.error("Failed to save", e)
         }
     }
 
@@ -120,17 +131,15 @@ class InFileStorageExtension @Inject constructor(
 
     private fun save(user: User) {
         logger.debug("Saving user ${user.login}...")
-        synchronized(lock) {
-            try {
-                val userFile = getUserFile(user.login)
-                val userJson = storageSerializer.encodeToString(user)
-                userFile.writer().use {
-                    it.write(userJson)
-                }
-                logger.trace("User ${user.login} saved")
-            } catch (e: Exception) {
-                logger.error("Failed to save", e)
+        try {
+            val userFile = getUserFile(user.login)
+            val userJson = storageSerializer.encodeToString(user)
+            userFile.writer().use {
+                it.write(userJson)
             }
+            logger.trace("User ${user.login} saved")
+        } catch (e: Exception) {
+            logger.error("Failed to save", e)
         }
     }
 
