@@ -56,15 +56,15 @@ class PointsExtension @Inject constructor(
         }*/
     }
 
-    override fun getPoints(login: String): Int {
+    override suspend fun getPoints(login: String): Int {
         return bank.getPoints(login)
     }
 
-    override fun addPoints(login: String, points: Int) {
+    override suspend fun addPoints(login: String, points: Int) {
         bank.addPoints(login, points)
     }
 
-    override fun consumePoints(login: String, points: Int): Boolean {
+    override suspend fun consumePoints(login: String, points: Int): Boolean {
         return bank.removePoints(login, points)
     }
 }

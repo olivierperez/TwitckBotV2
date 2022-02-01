@@ -6,23 +6,22 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-internal object DateSerializer : KSerializer<Date> {
+internal object DateSerializer : KSerializer<LocalDateTime> {
 
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)
 
-    private val df: DateFormat = SimpleDateFormat("yyyy-MM-ddThh:mm:ss.sssZ")
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'")
 
-    override fun serialize(encoder: Encoder, date: Date) {
-        encoder.encodeString(df.format(date))
+    override fun serialize(encoder: Encoder, date: LocalDateTime) {
+        encoder.encodeString(date.format(formatter))
     }
 
-    override fun deserialize(decoder: Decoder): Date {
-        return df.parse(decoder.decodeString())
+    override fun deserialize(decoder: Decoder): LocalDateTime {
+        return LocalDateTime.parse(decoder.decodeString(), formatter)
     }
 
 }

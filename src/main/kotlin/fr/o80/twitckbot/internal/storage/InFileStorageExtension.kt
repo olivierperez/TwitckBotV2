@@ -1,17 +1,17 @@
 package fr.o80.twitckbot.internal.storage
 
+import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.internal.storage.bean.Global
 import fr.o80.twitckbot.internal.storage.bean.User
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.storage.Storage
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.inject.Inject
-import kotlin.concurrent.read
-import kotlin.concurrent.write
 
 private val storageSerializer = Json {
     prettyPrint = true
@@ -21,6 +21,7 @@ private inline fun <reified T : Any> String.parse(): T {
     return storageSerializer.decodeFromString<T>(this)
 }
 
+@SessionScope
 class InFileStorageExtension @Inject constructor(
     loggerFactory: LoggerFactory,
     private val sanitizer: FileNameSanitizer
@@ -32,7 +33,7 @@ class InFileStorageExtension @Inject constructor(
     private val outputDirectory = File(".storage/")
     private val usersDirectory = File(outputDirectory, "users")
 
-    private val lock = ReentrantReadWriteLock()
+    private val lock = Mutex()
 
     init {
         if (!outputDirectory.exists())
@@ -44,33 +45,33 @@ class InFileStorageExtension @Inject constructor(
         }
     }
 
-    override fun hasUserInfo(login: String): Boolean {
-        lock.read {
+    override suspend fun hasUserInfo(login: String): Boolean {
+        lock.withLock {
             logger.trace("Check if user info exists $login")
             val userFile = getUserFile(login)
             return userFile.isFile
         }
     }
 
-    override fun putUserInfo(login: String, namespace: String, key: String, value: String) {
-        lock.write {
+    override suspend fun putUserInfo(login: String, namespace: String, key: String, value: String) {
+        lock.withLock {
             logger.trace("Putting user info into $login [$namespace//$key] => $value")
             with(getOrCreateUser(login)) {
                 putExtra("$namespace//$key", value)
                 save(this)
             }
+            logger.trace("END putUserInfo || ${Thread.currentThread().name}")
         }
     }
 
-    override fun getUserInfo(login: String, namespace: String, key: String): String? {
-        lock.read {
+    override suspend fun getUserInfo(login: String, namespace: String, key: String): String? =
+        lock.withLock {
             logger.trace("Getting user info of $login [$namespace//$key]")
             return getOrCreateUser(login).getExtra("$namespace//$key")
         }
-    }
 
-    override fun putGlobalInfo(namespace: String, key: String, value: String) {
-        lock.write {
+    override suspend fun putGlobalInfo(namespace: String, key: String, value: String) {
+        lock.withLock {
             logger.trace("Putting info into [$namespace//$key] => $value")
             with(getOrCreateGlobal()) {
                 putExtra(namespace, key, value)
@@ -79,12 +80,11 @@ class InFileStorageExtension @Inject constructor(
         }
     }
 
-    override fun getGlobalInfo(namespace: String): List<Pair<String, String>> {
-        lock.read {
+    override suspend fun getGlobalInfo(namespace: String): List<Pair<String, String>> =
+        lock.withLock {
             logger.trace("Getting all info [$namespace]")
             return getOrCreateGlobal().getExtras(namespace)
         }
-    }
 
     override fun getPathOf(path: String, file: String): File {
         return File(outputDirectory, "$path/$file")
@@ -134,6 +134,7 @@ class InFileStorageExtension @Inject constructor(
         try {
             val userFile = getUserFile(user.login)
             val userJson = storageSerializer.encodeToString(user)
+            logger.trace("About to store into ${user.login}\n-----\n$userJson\n-----")
             userFile.writer().use {
                 it.write(userJson)
             }

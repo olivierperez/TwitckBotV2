@@ -40,7 +40,7 @@ class PointsCommands(
         return commandEvent
     }
 
-    private fun handleAddCommand(commandEvent: CommandEvent) {
+    private suspend fun handleAddCommand(commandEvent: CommandEvent) {
         if (commandEvent.viewer hasNoPrivilegesOf privilegedBadges) return
 
         val command = commandEvent.command

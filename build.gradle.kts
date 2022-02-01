@@ -36,7 +36,7 @@ dependencies {
 
     // Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:1.0-M1-1.4.0-rc")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     // Dependency injection
     implementation("com.google.dagger:dagger:2.40.5")
