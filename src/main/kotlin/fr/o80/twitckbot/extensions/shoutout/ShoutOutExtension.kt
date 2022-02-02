@@ -2,6 +2,7 @@ package fr.o80.twitckbot.extensions.shoutout
 
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.help.Help
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.sound.Sound
@@ -26,13 +27,12 @@ import javax.inject.Inject
 class ShoutOutExtension @Inject constructor(
     private val eventBus: EventBus,
     private val twitchApi: TwitchApi,
+    help: Help,
     loggerFactory: LoggerFactory,
     points: Points,
     sound: Sound,
     storage: Storage,
-    timeCheckerFactory: TimeCheckerFactory
-    // TODO Help
-    // help: HelpExtension?
+    timeCheckerFactory: TimeCheckerFactory,
 ) : Extension() {
 
     private val logger = loggerFactory.getLogger(ShoutOutExtension::class.java.simpleName)
@@ -45,7 +45,7 @@ class ShoutOutExtension @Inject constructor(
 
     init {
         logger.info("Initializing")
-//        help?.registerCommand(SHOUT_OUT_COMMAND)
+        help.registerCommand(SHOUT_OUT_COMMAND)
 
         config = readConfig("shout_out.json")
 
@@ -108,7 +108,7 @@ class ShoutOutExtension @Inject constructor(
             ?: return
 
         val randomMessage = config.promotionMessages.random().formatViewer(messageEvent, lastVideo)
-        // TODO Handle CoolDown instead of call below -> messenger.sendWhenAvailable(messageEvent.channel, randomMessage, Importance.HIGH)
+        // TODO Handle CoolDown/Importance instead of call below -> messenger.sendWhenAvailable(messageEvent.channel, randomMessage, Importance.HIGH)
         eventBus.send(SendMessageEvent(messageEvent.channel, randomMessage))
     }
 

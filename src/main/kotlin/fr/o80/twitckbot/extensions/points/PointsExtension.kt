@@ -2,6 +2,7 @@ package fr.o80.twitckbot.extensions.points
 
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.help.Help
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.storage.Storage
@@ -16,9 +17,8 @@ import javax.inject.Inject
 @SessionScope
 class PointsExtension @Inject constructor(
     private val eventBus: EventBus,
-    // TODO Help
-    // private val help: HelpExtension?,
     private val bank: PointsBank,
+    help: Help,
     loggerFactory: LoggerFactory,
     storage: Storage,
 ) : Extension(), Points {
@@ -50,10 +50,10 @@ class PointsExtension @Inject constructor(
             }
         }
 
-        /*help?.run {
+        with(help) {
             registerCommand(POINTS_COMMAND)
             registerCommand(POINTS_GIVE_COMMAND)
-        }*/
+        }
     }
 
     override suspend fun getPoints(login: String): Int {

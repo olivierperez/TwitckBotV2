@@ -1,6 +1,7 @@
 package fr.o80.twitckbot.extensions.rewards
 
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.help.Help
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.sound.Sound
@@ -19,10 +20,10 @@ import javax.inject.Inject
 class RewardsExtension @Inject constructor(
     private val points: Points,
     eventBus: EventBus,
+    help: Help,
     loggerFactory: LoggerFactory,
     sound: Sound,
-    timeCheckerFactory: TimeCheckerFactory
-//    help: HelpExtension?
+    timeCheckerFactory: TimeCheckerFactory,
 ) : Extension() {
 
     private val logger = loggerFactory.getLogger(RewardsExtension::class.java.simpleName)
@@ -65,7 +66,7 @@ class RewardsExtension @Inject constructor(
             }
         }
 
-//        help?.registerCommand(claimConfig.command)
+        help.registerCommand(config.claim.command)
     }
 
     private fun TimeCheckerFactory.createClaimTimeChecker() =
