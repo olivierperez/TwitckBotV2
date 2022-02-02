@@ -30,8 +30,6 @@ dependencies {
     // Oauth: Ktor + OauthClient + HttpClient
     implementation("io.ktor:ktor-server-core:1.6.7")
     implementation("io.ktor:ktor-server-netty:1.6.7")
-    implementation("com.github.mazine:oauth2-client-kotlin:1.0.2")
-    implementation("org.glassfish.jersey.media:jersey-media-moxy:2.33")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
 
     // Serialization

@@ -18,7 +18,6 @@ import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
-import org.jetbrains.hub.oauth2.client.jersey.oauth2Client
 import java.net.URI
 import java.time.Duration
 import java.time.Instant
@@ -66,22 +65,24 @@ class AuthenticateOnTwitch @Inject constructor(
             atomicServer.set(server)
             server.start(wait = false)
 
-            return oauth2Client().implicitFlowURI(
-                authEndpoint = URI(oauthEndpoint),
-                clientID = clientId,
-                redirectURI = URI(oauthRedirectUri.format(port)),
-                scope = listOf(
-                    "bits:read",
-                    "chat:read",
-                    "chat:edit",
-                    "channel:moderate",
-                    "channel:read:hype_train",
-                    "channel:read:redemptions",
-                    "channel:read:subscriptions",
-                    "channel_subscriptions"
-                ),
-                state = UUID.randomUUID().toString()
-            ).toString()
+            val scope = listOf(
+                "bits:read",
+                "chat:read",
+                "chat:edit",
+                "channel:moderate",
+                "channel:read:hype_train",
+                "channel:read:redemptions",
+                "channel:read:subscriptions",
+                "channel_subscriptions"
+            )
+
+            return StringBuilder(oauthEndpoint)
+                .append("?response_type=token")
+                .append("&client_id=$clientId")
+                .append("&redirect_uri=${URI(oauthRedirectUri.format(port)).toASCIIString()}")
+                .append("&scope=${scope.joinToString("%20")}")
+                .append("&state=${UUID.randomUUID()}")
+                .toString()
         }
     }
 
