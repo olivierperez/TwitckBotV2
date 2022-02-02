@@ -3,15 +3,17 @@ package fr.o80.twitckbot.screen.onboarding
 import fr.o80.twitckbot.data.model.FullAuth
 import fr.o80.twitckbot.service.oauth.AuthenticateOnTwitch
 import fr.o80.twitckbot.service.oauth.LoadAuthentication
+import fr.o80.twitckbot.service.system.BrowseUrl
+import fr.o80.twitckbot.service.system.CopyToClipboard
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.awt.Desktop
-import java.net.URI
 import javax.inject.Inject
 
 class OnboardingViewModel @Inject constructor(
     private val authenticateOnTwitch: AuthenticateOnTwitch,
-    private val loadAuthentication: LoadAuthentication
+    private val loadAuthentication: LoadAuthentication,
+    private val browseUrl: BrowseUrl,
+    private val copyToClipboard: CopyToClipboard
 ) {
 
     val state: StateFlow<UiState> get() = _state
@@ -37,25 +39,22 @@ class OnboardingViewModel @Inject constructor(
         onAuthFailed: (Exception) -> Unit
     ) {
         val url = authenticateOnTwitch(port, clientId, clientSecret, onAuthCompleted, onAuthFailed)
+        browseUrl(url)
+    }
 
-        if (Desktop.isDesktopSupported() &&
-            Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
-        ) {
-            Desktop.getDesktop().browse(URI(url))
-        } else {
-            System.err.println("System cannot open URL: $url")
-        }
+    fun copyAuthorizationUrl(
+        port: Int,
+        clientId: String,
+        clientSecret: String,
+        onAuthCompleted: (FullAuth) -> Unit,
+        onAuthFailed: (Exception) -> Unit
+    ) {
+        val url = authenticateOnTwitch(port, clientId, clientSecret, onAuthCompleted, onAuthFailed)
+        copyToClipboard(url)
     }
 
     fun generateClientCredentials() {
-        val url = "https://dev.twitch.tv/console/apps/create"
-        if (Desktop.isDesktopSupported() &&
-            Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
-        ) {
-            Desktop.getDesktop().browse(URI(url))
-        } else {
-            System.err.println("System cannot open URL: $url")
-        }
+        browseUrl("https://dev.twitch.tv/console/apps/create")
     }
 
     sealed interface UiState {

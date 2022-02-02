@@ -53,6 +53,15 @@ class OnboardingComponent(
                     onAuthFailed = { it.printStackTrace() }
                 )
             },
+            onCopyAuthorizationUrlClicked = { port, clientId, clientSecret ->
+                viewModel.copyAuthorizationUrl(
+                    port,
+                    clientId,
+                    clientSecret,
+                    onAuthCompleted = onAuthentication,
+                    onAuthFailed = { it.printStackTrace() }
+                )
+            },
             onGenerateClientCredentialsClicked = {
                 viewModel.generateClientCredentials()
             }
