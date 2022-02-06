@@ -15,7 +15,7 @@ class ShoutOutCommand(
     private val config: ShoutOutConfiguration,
     private val storage: Storage,
     private val sound: Sound,
-    private val points: Points?, // TODO Rendre Points désactivable plutôt que nullable
+    private val points: Points,
     private val eventBus: EventBus
 ) {
 
@@ -24,15 +24,6 @@ class ShoutOutCommand(
     suspend fun interceptCommandEvent(commandEvent: CommandEvent): CommandEvent {
         when (commandEvent.command.tag) {
             SHOUT_OUT_COMMAND -> handleShoutOutCommand(commandEvent)
-        }
-        return commandEvent
-    }
-
-    suspend fun interceptWhisperCommandEvent(
-        commandEvent: CommandEvent
-    ): CommandEvent {
-        when (commandEvent.command.tag) {
-            SHOUT_OUT_COMMAND -> shoutOut(commandEvent)
         }
         return commandEvent
     }
@@ -61,7 +52,7 @@ class ShoutOutCommand(
             return
         }
 
-        if (points != null && !points.consumePoints(viewerLogin, RECORDING_COST)) {
+        if (!points.consumePoints(viewerLogin, RECORDING_COST)) {
             val errorMessage = config.i18n.noPointsEnough.replace("#USER#", viewerLogin)
             eventBus.send(SendMessageEvent(commandEvent.channel, errorMessage))
             sound.playNegative()
@@ -85,7 +76,7 @@ class ShoutOutCommand(
             return
         }
 
-        if (points != null && !points.consumePoints(viewerLogin, SHOUT_OUT_COST)) {
+        if (!points.consumePoints(viewerLogin, SHOUT_OUT_COST)) {
             val message = config.i18n.noPointsEnough.replace("#USER#", viewerLogin)
             eventBus.send(SendMessageEvent(commandEvent.channel, message))
             return
@@ -94,7 +85,7 @@ class ShoutOutCommand(
         if (storage.hasUserInfo(shoutOutLogin)) {
             storage.getUserInfo(shoutOutLogin, namespace, SHOUT_OUT_COMMAND)?.let { message ->
                 // TODO Send with CoolDown
-                eventBus.send(SendMessageEvent(commandEvent.channel, message))
+                eventBus.send(SendMessageEvent(config.channel.name, message))
             }
         }
     }

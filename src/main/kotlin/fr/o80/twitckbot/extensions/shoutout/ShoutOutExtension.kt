@@ -73,12 +73,6 @@ class ShoutOutExtension @Inject constructor(
                 command.interceptCommandEvent(event)
             }
         }
-        // TODO Command Whispering
-        /*scope.launch {
-            eventBus.events.filterIsInstance<WhisperingCommandEvent>().collect { event ->
-                command.interceptWhisperCommandEvent(event)
-            }
-        }*/
     }
 
     private suspend fun interceptMessageEvent(messageEvent: MessageEvent): MessageEvent {

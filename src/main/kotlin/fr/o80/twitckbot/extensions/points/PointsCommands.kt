@@ -6,6 +6,7 @@ import fr.o80.twitckbot.system.bean.Badge
 import fr.o80.twitckbot.system.event.CommandEvent
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.SendMessageEvent
+import fr.o80.twitckbot.system.event.SendWhisperEvent
 import fr.o80.twitckbot.utils.sanitizeLogin
 import fr.o80.twitckbot.utils.tryToInt
 
@@ -92,8 +93,7 @@ class PointsCommands(
                     .replace("#TO#", toLogin)
             }
 
-            // TODO Send whispering
-            // messenger.whisper(commandEvent.channel, commandEvent.viewer.login, msg)
+            eventBus.send(SendWhisperEvent(commandEvent.channel, commandEvent.viewer.login, msg))
         }
     }
 
@@ -109,7 +109,7 @@ class PointsCommands(
         val msg = if (points == 0) {
             message.viewerHasNoPoints
                 .replace("#USER#", commandEvent.viewer.displayName)
-                .replace("#POINTS#", points.toString())
+                .replace("#POINTS#", "0")
         } else {
             message.viewerHasPoints
                 .replace("#USER#", commandEvent.viewer.displayName)

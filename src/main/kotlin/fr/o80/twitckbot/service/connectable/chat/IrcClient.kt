@@ -5,7 +5,9 @@ import fr.o80.twitckbot.di.BotAuth
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.SendMessageEvent
+import fr.o80.twitckbot.system.event.SendWhisperEvent
 import fr.o80.twitckbot.system.line.PrivMsgLineInterpreter
+import fr.o80.twitckbot.system.line.WhisperLineInterpreter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -36,6 +38,7 @@ class IrcClient @Inject constructor(
     @BotAuth
     private val auth: Auth,
     private val privMsgLineInterpreter: PrivMsgLineInterpreter,
+    private val whisperLineInterpreter: WhisperLineInterpreter,
     private val eventBus: EventBus
 ) : PircBot(), IrcMessenger {
 
@@ -78,8 +81,15 @@ class IrcClient @Inject constructor(
             scope.launch {
                 eventBus.events
                     .filterIsInstance<SendMessageEvent>()
-                    .collect {
-                        send(it.channel, it.message)
+                    .collect { event ->
+                        send(event.channel, event.message)
+                    }
+            }
+            scope.launch {
+                eventBus.events
+                    .filterIsInstance<SendWhisperEvent>()
+                    .collect { event ->
+                        send(event.channel, "/w ${event.recipient} ${event.message}")
                     }
             }
         } catch (e: Exception) {
@@ -109,6 +119,7 @@ class IrcClient @Inject constructor(
             initializer.handleLine(line)
             ping.handleLine(line)
             privMsgLineInterpreter.handle(line)
+            whisperLineInterpreter.handle(line)
         }
     }
 
@@ -118,7 +129,7 @@ class IrcClient @Inject constructor(
 
     override fun send(channel: String, message: String) {
         super.sendMessage(channel, message)
-        Logger.getLogger("debug").info("Messange sent to $channel: $message")
+        logger.info("Message sent to $channel: $message")
     }
 
     fun register(onConnectCallback: () -> Unit, onDisconnectCallback: () -> Unit) {

@@ -45,3 +45,15 @@ class SendMessageEvent(
     // TODO coolDown: CoolDown,
     // TODO priority: Priority,
 ) : Event
+
+class SendWhisperEvent(
+    val channel: String,
+    val recipient: String,
+    val message: String,
+) : Event
+
+class WhisperEvent(
+    val destination: String,
+    val viewer: Viewer,
+    val message: String
+) : Event
