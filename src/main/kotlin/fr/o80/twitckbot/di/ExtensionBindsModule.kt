@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
 import fr.o80.twitckbot.extensions.help.HelpExtension
+import fr.o80.twitckbot.extensions.market.MarketExtension
 import fr.o80.twitckbot.extensions.points.PointsExtension
 import fr.o80.twitckbot.extensions.repeat.RepeatExtension
 import fr.o80.twitckbot.extensions.rewards.RewardsExtension
@@ -29,6 +30,10 @@ interface ExtensionBindsModule {
     @Binds
     @IntoSet
     fun bindHelpExtension(impl: HelpExtension): Extension
+
+    @Binds
+    @IntoSet
+    fun bindMarketExtension(impl: MarketExtension): Extension
 
     @Binds
     @IntoSet

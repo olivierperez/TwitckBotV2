@@ -1,7 +1,6 @@
 package fr.o80.twitckbot.extensions.help
 
 import fr.o80.twitckbot.di.SessionScope
-import fr.o80.twitckbot.extensions.points.PointsExtension
 import fr.o80.twitckbot.service.config.readConfig
 import fr.o80.twitckbot.service.help.Help
 import fr.o80.twitckbot.service.log.LoggerFactory
@@ -20,7 +19,7 @@ class HelpExtension @Inject constructor(
     loggerFactory: LoggerFactory,
 ) : Help, Extension() {
 
-    private val logger = loggerFactory.getLogger(PointsExtension::class.java.simpleName)
+    private val logger = loggerFactory.getLogger(HelpExtension::class.java.simpleName)
 
     private val config: HelpConfiguration
 
