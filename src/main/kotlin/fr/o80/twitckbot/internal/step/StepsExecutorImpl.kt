@@ -2,11 +2,13 @@ package fr.o80.twitckbot.internal.step
 
 import fr.o80.twitckbot.service.log.Logger
 import fr.o80.twitckbot.service.log.LoggerFactory
+import fr.o80.twitckbot.service.overlay.Overlay
 import fr.o80.twitckbot.service.sound.Sound
 import fr.o80.twitckbot.system.command.CommandParser
 import fr.o80.twitckbot.system.event.CommandEvent
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.MessageEvent
+import fr.o80.twitckbot.system.event.OverlayEvent
 import fr.o80.twitckbot.system.step.ActionStep
 import fr.o80.twitckbot.system.step.CommandStep
 import fr.o80.twitckbot.system.step.MessageStep
@@ -15,13 +17,14 @@ import fr.o80.twitckbot.system.step.OverlayPopupStep
 import fr.o80.twitckbot.system.step.SoundStep
 import fr.o80.twitckbot.system.step.StepParams
 import fr.o80.twitckbot.system.step.StepsExecutor
+import java.time.Duration
 import javax.inject.Inject
 
 class StepsExecutorImpl @Inject constructor(
     private val commandParser: CommandParser,
     private val stepFormatter: StepFormatter,
     private val eventBus: EventBus,
-//    private val overlay: OverlayExtension?,
+    private val overlay: Overlay?,
     private val sound: Sound?,
     loggerFactory: LoggerFactory
 ) : StepsExecutor {
@@ -61,28 +64,28 @@ class StepsExecutorImpl @Inject constructor(
         eventBus.send(MessageEvent(params.channel, viewer = params.viewer, message))
     }
 
-    private suspend fun showPopup(
+    private fun showPopup(
         step: OverlayPopupStep,
         params: StepParams
     ) {
-        /*if (overlay == null) {
+        if (overlay == null) {
             logger.error("Overlay popup steps require Overlay extension to work")
         } else {
             val text = stepFormatter.format(step.text, params)
             overlay.showImage(step.image, text, Duration.ofSeconds(step.seconds))
-        }*/
+        }
     }
 
-    private suspend fun showEvent(
+    private fun showEvent(
         step: OverlayEventStep,
         params: StepParams
     ) {
-        /*if (overlay == null) {
+        if (overlay == null) {
             logger.error("Overlay event steps require Overlay extension to work")
         } else {
             val text = stepFormatter.format(step.text, params)
             overlay.onEvent(OverlayEvent(text))
-        }*/
+        }
     }
 
     private fun play(step: SoundStep) {

@@ -1,20 +1,21 @@
 package fr.o80.twitckbot.extensions.rewards
 
+import fr.o80.twitckbot.service.overlay.Overlay
 import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.sound.Sound
 import fr.o80.twitckbot.service.time.TimeChecker
 import fr.o80.twitckbot.system.bean.ChannelName
 import fr.o80.twitckbot.system.bean.Viewer
 import fr.o80.twitckbot.system.event.CommandEvent
+import java.time.Duration
 
 class RewardsCommands(
     private val channel: ChannelName,
     private val claimConfig: RewardsClaim,
     private val i18n: RewardsI18n,
     private val claimTimeChecker: TimeChecker,
+    private val overlay: Overlay?,
     private val points: Points,
-//    TODO Overlay
-//    private val overlay: OverlayExtension?,
     private val sound: Sound?
 ) {
 
@@ -56,8 +57,7 @@ class RewardsCommands(
     }
 
     private fun displayCoinAndMessage(message: String) {
-//        TODO Overlay
-//        overlay?.showImage(claimConfig.image, message, Duration.ofSeconds(5))
+        overlay?.showImage(claimConfig.image, message, Duration.ofSeconds(5))
     }
 
 }

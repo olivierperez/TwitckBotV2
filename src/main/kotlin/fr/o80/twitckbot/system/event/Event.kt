@@ -10,14 +10,14 @@ data class BitsEvent(
     val channel: String,
     val bits: Int,
     val viewer: Viewer
-): Event
+) : Event
 
 data class CommandEvent(
     val channel: String,
     val command: Command,
     val bits: Int?,
     val viewer: Viewer
-): Event
+) : Event
 
 data class EmotesEvent(
     val channel: String,
@@ -25,11 +25,15 @@ data class EmotesEvent(
     val emotes: List<String>,
     val emoteOnly: Boolean,
     val viewer: Viewer
-): Event
+) : Event
 
 data class FollowsEvent(
     val followers: NewFollowers
 )
+
+class OverlayEvent(
+    val text: String
+) : Event
 
 class MessageEvent(
     val channel: String,
@@ -42,7 +46,7 @@ data class RewardEvent(
     val rewardId: String,
     val message: String,
     val viewer: Viewer
-): Event
+) : Event
 
 class SendMessageEvent(
     val channel: String,

@@ -46,6 +46,12 @@ dependencies {
     // Log
     implementation("ch.qos.logback:logback-classic:1.2.10")
 
+    // LWJGL
+    implementation("org.lwjgl:lwjgl:3.2.1")
+    implementation("org.lwjgl.osgi:org.lwjgl.glfw:3.2.1.2")
+    implementation("org.lwjgl.osgi:org.lwjgl.opengl:3.2.1.2")
+    implementation("org.lwjgl.osgi:org.lwjgl.stb:3.2.1.2")
+
     // Test
     testImplementation("io.mockk:mockk:1.12.1")
     testImplementation(kotlin("test"))

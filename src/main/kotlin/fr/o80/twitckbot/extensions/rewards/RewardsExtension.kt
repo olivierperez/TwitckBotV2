@@ -3,6 +3,7 @@ package fr.o80.twitckbot.extensions.rewards
 import fr.o80.twitckbot.service.config.readConfig
 import fr.o80.twitckbot.service.help.Help
 import fr.o80.twitckbot.service.log.LoggerFactory
+import fr.o80.twitckbot.service.overlay.Overlay
 import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.sound.Sound
 import fr.o80.twitckbot.service.time.TimeChecker
@@ -24,6 +25,7 @@ class RewardsExtension @Inject constructor(
     loggerFactory: LoggerFactory,
     sound: Sound,
     timeCheckerFactory: TimeCheckerFactory,
+    overlay: Overlay?,
 ) : Extension() {
 
     private val logger = loggerFactory.getLogger(RewardsExtension::class.java.simpleName)
@@ -44,6 +46,7 @@ class RewardsExtension @Inject constructor(
             config.claim,
             config.i18n,
             timeCheckerFactory.createClaimTimeChecker(),
+            overlay,
             points,
             sound
         )
