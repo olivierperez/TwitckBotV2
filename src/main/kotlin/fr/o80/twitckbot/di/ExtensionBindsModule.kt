@@ -3,6 +3,7 @@ package fr.o80.twitckbot.di
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
+import fr.o80.twitckbot.extensions.commands.RuntimeCommand
 import fr.o80.twitckbot.extensions.help.HelpExtension
 import fr.o80.twitckbot.extensions.market.MarketExtension
 import fr.o80.twitckbot.extensions.points.PointsExtension
@@ -45,11 +46,15 @@ interface ExtensionBindsModule {
 
     @Binds
     @IntoSet
-    fun bindSoundExtension(impl: SoundExtension): Extension
+    fun bindShoutOutExtension(impl: ShoutOutExtension): Extension
 
     @Binds
     @IntoSet
-    fun bindViewerPromotionExtension(impl: ShoutOutExtension): Extension
+    fun bindRuntimeCommand(impl: RuntimeCommand): Extension
+
+    @Binds
+    @IntoSet
+    fun bindSoundExtension(impl: SoundExtension): Extension
 
     @Binds
     @IntoSet
