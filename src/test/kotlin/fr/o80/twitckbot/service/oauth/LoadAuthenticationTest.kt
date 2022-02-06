@@ -42,7 +42,12 @@ internal class LoadAuthenticationTest {
     fun noExpiredAuthenticationNoAuthentication() {
         // Given
         every { authStorage.readAuth() } returns FullAuth(
-            botAuth = TODO(),
+            botAuth = Auth(
+                tokenType = "azerty",
+                accessToken = "azerty",
+                expiresAt = Instant.now() - Duration.ofSeconds(5),
+                scopes = listOf()
+            ),
             broadcasterAuth = Auth(
                 tokenType = "azerty",
                 accessToken = "azerty",
@@ -63,7 +68,12 @@ internal class LoadAuthenticationTest {
     fun loadSavedAuthentication() {
         // Given
         every { authStorage.readAuth() } returns FullAuth(
-            botAuth = TODO(),
+            botAuth = Auth(
+                tokenType = "azerty",
+                accessToken = "azerty",
+                expiresAt = Instant.now() + Duration.ofDays(30),
+                scopes = listOf()
+            ),
             broadcasterAuth = Auth(
                 tokenType = "azerty",
                 accessToken = "azerty",
