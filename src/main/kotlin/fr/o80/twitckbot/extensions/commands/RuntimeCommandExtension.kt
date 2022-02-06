@@ -17,18 +17,18 @@ const val SCOPE_STREAM = "stream"
 const val SCOPE_PERMANENT = "permanent"
 
 // TODO OPZ Extraire la partie gestion des commandes
-class RuntimeCommand @Inject constructor(
+class RuntimeCommandExtension @Inject constructor(
     private val storage: Storage,
     private val help: Help,
     private val eventBus: EventBus,
     loggerFactory: LoggerFactory,
 ) : Extension() {
 
-    private val logger = loggerFactory.getLogger(RuntimeCommand::class.java.simpleName)
+    private val logger = loggerFactory.getLogger(RuntimeCommandExtension::class.java.simpleName)
 
     private val config: RuntimeCommandConfiguration
 
-    private val namespace: String = RuntimeCommand::class.java.name
+    private val namespace: String = RuntimeCommandExtension::class.java.name
 
     private val runtimeCommands = mutableMapOf<String, String?>()
 

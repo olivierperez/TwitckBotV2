@@ -3,7 +3,8 @@ package fr.o80.twitckbot.di
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
-import fr.o80.twitckbot.extensions.commands.RuntimeCommand
+import fr.o80.twitckbot.extensions.channel.ChannelExtension
+import fr.o80.twitckbot.extensions.commands.RuntimeCommandExtension
 import fr.o80.twitckbot.extensions.help.HelpExtension
 import fr.o80.twitckbot.extensions.market.MarketExtension
 import fr.o80.twitckbot.extensions.points.PointsExtension
@@ -30,6 +31,10 @@ interface ExtensionBindsModule {
 
     @Binds
     @IntoSet
+    fun bindChannelExtension(impl: ChannelExtension): Extension
+
+    @Binds
+    @IntoSet
     fun bindHelpExtension(impl: HelpExtension): Extension
 
     @Binds
@@ -50,7 +55,7 @@ interface ExtensionBindsModule {
 
     @Binds
     @IntoSet
-    fun bindRuntimeCommand(impl: RuntimeCommand): Extension
+    fun bindRuntimeCommand(impl: RuntimeCommandExtension): Extension
 
     @Binds
     @IntoSet

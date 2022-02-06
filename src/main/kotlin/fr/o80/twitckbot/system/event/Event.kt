@@ -1,6 +1,7 @@
 package fr.o80.twitckbot.system.event
 
 import fr.o80.twitckbot.system.bean.Command
+import fr.o80.twitckbot.system.bean.NewFollowers
 import fr.o80.twitckbot.system.bean.Viewer
 
 sealed interface Event
@@ -25,6 +26,10 @@ data class EmotesEvent(
     val emoteOnly: Boolean,
     val viewer: Viewer
 ): Event
+
+data class FollowsEvent(
+    val followers: NewFollowers
+)
 
 class MessageEvent(
     val channel: String,
