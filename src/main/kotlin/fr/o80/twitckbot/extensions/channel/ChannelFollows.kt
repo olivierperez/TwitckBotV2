@@ -1,6 +1,6 @@
 package fr.o80.twitckbot.extensions.channel
 
-import fr.o80.twitckbot.system.bean.NewFollower
+import fr.o80.twitckbot.system.bean.Follower
 import fr.o80.twitckbot.system.bean.Viewer
 import fr.o80.twitckbot.system.event.FollowsEvent
 import fr.o80.twitckbot.system.step.ActionStep
@@ -22,12 +22,12 @@ class ChannelFollows(
         }
     }
 
-    private fun createViewerFromName(newFollower: NewFollower) =
+    private fun createViewerFromName(follower: Follower) =
         Viewer(
-            login = newFollower.fromName,
-            displayName = newFollower.fromName,
+            login = follower.fromName,
+            displayName = follower.fromName,
             badges = listOf(),
-            userId = newFollower.fromId,
+            userId = follower.fromId,
             color = "#FFFFFF"
         )
 }

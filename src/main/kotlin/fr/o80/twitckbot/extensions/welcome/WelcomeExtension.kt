@@ -95,17 +95,17 @@ class WelcomeExtension @Inject constructor(
     }
 
     private fun pickMessage(viewer: Viewer): String {
-        val follower = viewer.login.getFollowerOrNull()
+        val follower = viewer.getFollowerOrNull()
         return if (follower != null) {
             config.messages.forFollowers.random()
-                .replace("#USER#", follower.user.displayName)
+                .replace("#USER#", follower.fromName)
         } else {
             config.messages.forViewers.random()
                 .replace("#USER#", viewer.displayName)
         }
     }
 
-    private fun String.getFollowerOrNull(): Follower? {
-        return followers.firstOrNull { follower -> follower.user.name == this }
+    private fun Viewer.getFollowerOrNull(): Follower? {
+        return followers.firstOrNull { follower -> follower.fromId == this.userId }
     }
 }

@@ -3,12 +3,7 @@ package fr.o80.twitckbot.system.bean
 import fr.o80.twitckbot.system.json.DateSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.*
-
-@Serializable
-data class Follower(
-    val user: User
-)
+import java.time.LocalDateTime
 
 @Serializable
 data class User(
@@ -20,18 +15,22 @@ data class User(
     val logo: String
 )
 
+@Serializable
 data class Channel(
+    @SerialName("broadcaster_id")
     val id: String,
-    @SerialName("display_name")
+    @SerialName("broadcaster_login")
+    val login: String,
+    @SerialName("broadcaster_name")
     val displayName: String,
+    @SerialName("broadcaster_language")
+    val language: String,
+    @SerialName("game_name")
     val game: String?,
-    val followers: Int,
-    val views: Int,
-    val status: String?,
-    val url: String,
-    val logo: String,
-    @SerialName("video_banner")
-    val videoBanner: String
+    @SerialName("game_id")
+    val gameId: String?,
+    val title: String,
+    val delay: Int,
 )
 
 @Serializable
@@ -39,27 +38,25 @@ data class Video(
     val id: String,
     val title: String,
     val description: String?,
-    val game: String,
     val url: String,
     @Serializable(with = DateSerializer::class)
     @SerialName("published_at")
-    val publishedAt: Date
+    val publishedAt: LocalDateTime
 )
 
+@Serializable
 data class ValidateResponse(
     @SerialName("client_id")
     val clientId: String,
-    @SerialName("user_id")
-    val userId: String,
-    val login: String,
     val scopes: List<String>
 )
 
 data class NewFollowers(
-    val data: List<NewFollower>
+    val data: List<Follower>
 )
 
-data class NewFollower(
+@Serializable
+data class Follower(
     @SerialName("from_id")
     val fromId: String,
     @SerialName("from_name")

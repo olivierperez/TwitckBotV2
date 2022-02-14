@@ -13,9 +13,9 @@ interface TwitchApi {
 
     fun getUser(userName: String): User
 
-    fun getChannel(channelId: String): Channel
+    fun getChannel(broadcasterId: String): Channel
 
-    fun getVideos(channelId: String, limit: Int): List<Video>
+    fun getVideos(userId: String, limit: Int): List<Video>
 
     fun downloadEmote(emoteId: String, outputStream: OutputStream)
 

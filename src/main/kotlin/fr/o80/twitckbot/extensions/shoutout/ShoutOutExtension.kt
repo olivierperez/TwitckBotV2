@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import java.time.Duration
-import java.time.Instant
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @SessionScope
@@ -93,9 +93,8 @@ class ShoutOutExtension @Inject constructor(
     private suspend fun promoteViewer(messageEvent: MessageEvent) {
         val lastVideo = twitchApi.getVideos(messageEvent.viewer.userId, 1)
             .filter {
-                (it.publishedAt.toInstant() + Duration.ofDays(config.daysSinceLastVideoToPromote)).isAfter(
-                    Instant.now()
-                )
+                (it.publishedAt + Duration.ofDays(config.daysSinceLastVideoToPromote))
+                    .isAfter(LocalDateTime.now())
             }
             .takeIf { it.isNotEmpty() }
             ?.first()
@@ -109,6 +108,5 @@ class ShoutOutExtension @Inject constructor(
     private fun String.formatViewer(messageEvent: MessageEvent, video: Video): String =
         this.replace("#USER#", messageEvent.viewer.displayName)
             .replace("#URL#", video.url)
-            .replace("#GAME#", video.game)
 
 }

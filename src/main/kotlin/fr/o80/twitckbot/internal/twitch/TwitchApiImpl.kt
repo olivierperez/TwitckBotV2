@@ -10,6 +10,7 @@ import fr.o80.twitckbot.system.bean.Follower
 import fr.o80.twitckbot.system.bean.User
 import fr.o80.twitckbot.system.bean.ValidateResponse
 import fr.o80.twitckbot.system.bean.Video
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -38,11 +39,14 @@ class TwitchApiImpl @Inject constructor(
 
     private val client: HttpClient = HttpClients.createDefault()
 
-    // TODO OPZ Migrer vers helix => https://dev.twitch.tv/docs/authentication/#sending-user-access-and-app-access-tokens
-    private val baseUrl: String = "https://api.twitch.tv/kraken"
+    private val baseUrl: String = "https://api.twitch.tv/helix"
+
+    init {
+        validate()
+    }
 
     override fun getFollowers(streamId: String): List<Follower> {
-        val url = "/channels/$streamId/follows"
+        val url = "/users/follows?to_id=$streamId"
         val answer = doRequest(url).parse<FollowAnswer>()
         return answer.follows
     }
@@ -53,13 +57,13 @@ class TwitchApiImpl @Inject constructor(
         return answer.users[0]
     }
 
-    override fun getChannel(channelId: String): Channel {
-        val url = "/channels/$channelId"
+    override fun getChannel(broadcasterId: String): Channel {
+        val url = "/channels?broadcaster_id=$broadcasterId"
         return doRequest(url).parse()
     }
 
-    override fun getVideos(channelId: String, limit: Int): List<Video> {
-        val url = "/channels/$channelId/videos?limit=$limit"
+    override fun getVideos(userId: String, limit: Int): List<Video> {
+        val url = "/videos?sort=time&first=$limit&user_id=$userId"
         val videoAnswer = doRequest(url).parse<VideoAnswer>()
         return videoAnswer.videos
     }
@@ -72,7 +76,7 @@ class TwitchApiImpl @Inject constructor(
 
     private fun doRequest(url: String): String {
         val request = HttpGet("$baseUrl$url").apply {
-            addHeader("Authorization", "OAuth ${auth.accessToken}")
+            addHeader("Authorization", "Bearer ${auth.accessToken}")
             addHeader("Accept", "application/vnd.twitchtv.v5+json")
             if (clientId != null) {
                 addHeader("Client-ID", clientId)
@@ -182,6 +186,7 @@ class TwitchApiImpl @Inject constructor(
 
 @Serializable
 class FollowAnswer(
+    @SerialName("data")
     val follows: List<Follower>
 )
 
