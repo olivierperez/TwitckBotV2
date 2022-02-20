@@ -1,5 +1,7 @@
 package fr.o80.twitckbot.extensions.points
 
+import fr.o80.twitckbot.service.connectable.chat.CoolDown
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.service.log.Logger
 import fr.o80.twitckbot.service.storage.Storage
 import fr.o80.twitckbot.system.bean.Badge
@@ -76,7 +78,8 @@ class PointsCommands(
                 eventBus.send(
                     SendMessageEvent(
                         commandEvent.channel,
-                        message.destinationViewerDoesNotExist
+                        message.destinationViewerDoesNotExist,
+                        Priority.IMMEDIATE
                     )
                 )
                 return
@@ -116,6 +119,11 @@ class PointsCommands(
                 .replace("#POINTS#", points.toString())
         }
 
-        eventBus.send(SendMessageEvent(commandEvent.channel, msg))
+        eventBus.send(
+            SendMessageEvent(
+                commandEvent.channel, msg,
+                Priority.IMMEDIATE
+            )
+        )
     }
 }

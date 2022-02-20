@@ -1,5 +1,7 @@
 package fr.o80.twitckbot.extensions.market
 
+import fr.o80.twitckbot.service.connectable.chat.CoolDown
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.service.log.Logger
 import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.system.event.CommandEvent
@@ -26,8 +28,13 @@ class MarketCommands(
 
     private suspend fun handleBuyCommand(commandEvent: CommandEvent) {
         if (commandEvent.command.options.isEmpty()) {
-            // TODO CoolDown.ofSeconds(10)
-            eventBus.send(SendMessageEvent(commandEvent.channel, i18n.usage))
+            eventBus.send(
+                SendMessageEvent(
+                    commandEvent.channel, i18n.usage,
+                    Priority.IMMEDIATE,
+                    CoolDown.ofSeconds(30)
+                )
+            )
             return
         }
 
@@ -36,8 +43,13 @@ class MarketCommands(
         }
 
         if (product == null) {
-            // TODO CoolDown.ofSeconds(10)
-            eventBus.send(SendMessageEvent(commandEvent.channel, i18n.productNotFound))
+            eventBus.send(
+                SendMessageEvent(
+                    commandEvent.channel, i18n.productNotFound,
+                    Priority.IMMEDIATE,
+                    CoolDown.ofSeconds(30)
+                )
+            )
             return
         }
 
@@ -47,8 +59,13 @@ class MarketCommands(
     private suspend fun handleMarketCommand(commandEvent: CommandEvent) {
         val productNames = products.joinToString(", ") { it.name }
         val message = i18n.weHaveThisProducts.replace("#PRODUCTS#", productNames)
-        // TODO CoolDown.ofSeconds(15)
-        eventBus.send(SendMessageEvent(commandEvent.channel, message))
+        eventBus.send(
+            SendMessageEvent(
+                commandEvent.channel, message,
+                Priority.IMMEDIATE,
+                CoolDown.ofSeconds(60)
+            )
+        )
     }
 
     private suspend fun doBuy(
@@ -71,7 +88,9 @@ class MarketCommands(
                 SendMessageEvent(
                     commandEvent.channel,
                     i18n.youDontHaveEnoughPoints
-                        .replace("#USER#", commandEvent.viewer.displayName)
+                        .replace("#USER#", commandEvent.viewer.displayName),
+                    Priority.IMMEDIATE,
+                    CoolDown.ofSeconds(10)
                 )
             )
         }

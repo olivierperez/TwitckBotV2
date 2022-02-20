@@ -2,6 +2,8 @@ package fr.o80.twitckbot.extensions.help
 
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.connectable.chat.CoolDown
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.service.help.Help
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.system.Extension
@@ -63,26 +65,34 @@ class HelpExtension @Inject constructor(
 
     private suspend fun executeCommand(tag: String) {
         commands[tag]?.let { message ->
-            // TODO val coolDown = CoolDown(Duration.ofMinutes(1))
-            eventBus.send(SendMessageEvent(config.channel.name, message))
+            eventBus.send(
+                SendMessageEvent(
+                    config.channel.name,
+                    message,
+                    Priority.IMMEDIATE,
+                    CoolDown.ofSeconds(60)
+                )
+            )
         }
     }
 
     private fun createHelpMessage(commands: Collection<String>): SendMessageEvent {
         return when {
             commands.isEmpty() -> {
-                // TODO val coolDown = CoolDown(Duration.ofMinutes(1))
                 SendMessageEvent(
                     config.channel.name,
-                    "Je ne sais rien faire O_o du moins pour l'instant..."
+                    "Je ne sais rien faire O_o du moins pour l'instant...",
+                    Priority.IMMEDIATE,
+                    CoolDown.ofSeconds(60)
                 )
             }
             else -> {
-                // TODO val coolDown = CoolDown(Duration.ofMinutes(1))
                 val commandsExamples = commands.joinToString(", ")
                 SendMessageEvent(
                     config.channel.name,
-                    "Je sais faire un paquet de choses, par exemple : $commandsExamples"
+                    "Je sais faire un paquet de choses, par exemple : $commandsExamples",
+                    Priority.IMMEDIATE,
+                    CoolDown.ofSeconds(60)
                 )
             }
         }

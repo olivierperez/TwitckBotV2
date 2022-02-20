@@ -1,5 +1,7 @@
 package fr.o80.twitckbot.system.event
 
+import fr.o80.twitckbot.service.connectable.chat.CoolDown
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.system.bean.Command
 import fr.o80.twitckbot.system.bean.NewFollowers
 import fr.o80.twitckbot.system.bean.Viewer
@@ -51,8 +53,8 @@ data class RewardEvent(
 class SendMessageEvent(
     val channel: String,
     val message: String,
-    // TODO coolDown: CoolDown,
-    // TODO priority: Priority,
+    val priority: Priority,
+    val coolDown: CoolDown? = null,
 ) : Event
 
 class SendWhisperEvent(

@@ -2,6 +2,7 @@ package fr.o80.twitckbot.extensions.shoutout
 
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.service.help.Help
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.points.Points
@@ -101,8 +102,7 @@ class ShoutOutExtension @Inject constructor(
             ?: return
 
         val randomMessage = config.promotionMessages.random().formatViewer(messageEvent, lastVideo)
-        // TODO Handle CoolDown/Importance instead of call below -> messenger.sendWhenAvailable(messageEvent.channel, randomMessage, Importance.HIGH)
-        eventBus.send(SendMessageEvent(messageEvent.channel, randomMessage))
+        eventBus.send(SendMessageEvent(messageEvent.channel, randomMessage, Priority.HIGH))
     }
 
     private fun String.formatViewer(messageEvent: MessageEvent, video: Video): String =

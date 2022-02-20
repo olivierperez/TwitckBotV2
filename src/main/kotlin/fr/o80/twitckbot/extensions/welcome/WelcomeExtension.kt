@@ -2,6 +2,7 @@ package fr.o80.twitckbot.extensions.welcome
 
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.time.TimeChecker
 import fr.o80.twitckbot.service.time.TimeCheckerFactory
@@ -86,12 +87,12 @@ class WelcomeExtension @Inject constructor(
     }
 
     private suspend fun welcomeHost(channel: String, message: String) {
-        eventBus.send(SendMessageEvent(channel, message))
+        eventBus.send(SendMessageEvent(channel, message, Priority.LOW))
     }
 
     private suspend fun welcomeViewer(channel: String, viewer: Viewer) {
         val randomMessage = pickMessage(viewer)
-        eventBus.send(SendMessageEvent(channel, randomMessage))
+        eventBus.send(SendMessageEvent(channel, randomMessage, Priority.LOW))
     }
 
     private fun pickMessage(viewer: Viewer): String {

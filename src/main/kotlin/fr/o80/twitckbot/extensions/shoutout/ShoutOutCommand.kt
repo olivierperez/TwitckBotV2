@@ -1,5 +1,7 @@
 package fr.o80.twitckbot.extensions.shoutout
 
+import fr.o80.twitckbot.service.connectable.chat.CoolDown
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.service.points.Points
 import fr.o80.twitckbot.service.sound.Sound
 import fr.o80.twitckbot.service.storage.Storage
@@ -37,7 +39,7 @@ class ShoutOutCommand(
     }
 
     private suspend fun showUsage(commandEvent: CommandEvent) {
-        eventBus.send(SendMessageEvent(commandEvent.channel, config.i18n.usage))
+        eventBus.send(SendMessageEvent(commandEvent.channel, config.i18n.usage, Priority.IMMEDIATE))
     }
 
     private suspend fun recordShoutOut(commandEvent: CommandEvent) {
@@ -47,21 +49,27 @@ class ShoutOutCommand(
 
         if (viewerLogin == shoutOutLogin) {
             val errorMessage = config.i18n.noAutoShoutOut.replace("#USER#", viewerLogin)
-            eventBus.send(SendMessageEvent(config.channel.name, errorMessage))
+            eventBus.send(SendMessageEvent(config.channel.name, errorMessage, Priority.IMMEDIATE))
             sound.playNegative()
             return
         }
 
         if (!points.consumePoints(viewerLogin, RECORDING_COST)) {
             val errorMessage = config.i18n.noPointsEnough.replace("#USER#", viewerLogin)
-            eventBus.send(SendMessageEvent(commandEvent.channel, errorMessage))
+            eventBus.send(SendMessageEvent(commandEvent.channel, errorMessage, Priority.IMMEDIATE))
             sound.playNegative()
             return
         }
 
         if (storage.hasUserInfo(shoutOutLogin)) {
             storage.putUserInfo(shoutOutLogin, namespace, SHOUT_OUT_COMMAND, message)
-            eventBus.send(SendMessageEvent(config.channel.name, config.i18n.shoutOutRecorded))
+            eventBus.send(
+                SendMessageEvent(
+                    config.channel.name,
+                    config.i18n.shoutOutRecorded,
+                    Priority.IMMEDIATE
+                )
+            )
         }
     }
 
@@ -71,21 +79,27 @@ class ShoutOutCommand(
 
         if (viewerLogin == shoutOutLogin) {
             val errorMessage = config.i18n.noAutoShoutOut.replace("#USER#", viewerLogin)
-            eventBus.send(SendMessageEvent(config.channel.name, errorMessage))
+            eventBus.send(SendMessageEvent(config.channel.name, errorMessage, Priority.IMMEDIATE))
             sound.playNegative()
             return
         }
 
         if (!points.consumePoints(viewerLogin, SHOUT_OUT_COST)) {
             val message = config.i18n.noPointsEnough.replace("#USER#", viewerLogin)
-            eventBus.send(SendMessageEvent(commandEvent.channel, message))
+            eventBus.send(SendMessageEvent(commandEvent.channel, message, Priority.IMMEDIATE))
             return
         }
 
         if (storage.hasUserInfo(shoutOutLogin)) {
             storage.getUserInfo(shoutOutLogin, namespace, SHOUT_OUT_COMMAND)?.let { message ->
-                // TODO Send with CoolDown
-                eventBus.send(SendMessageEvent(config.channel.name, message))
+                eventBus.send(
+                    SendMessageEvent(
+                        config.channel.name,
+                        message,
+                        Priority.IMMEDIATE,
+                        CoolDown.ofSeconds(60)
+                    )
+                )
             }
         }
     }

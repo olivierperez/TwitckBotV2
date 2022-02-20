@@ -2,6 +2,7 @@ package fr.o80.twitckbot.extensions.repeat
 
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.system.Extension
 import fr.o80.twitckbot.system.event.EventBus
@@ -35,7 +36,12 @@ class RepeatExtension @Inject constructor(
             while (true) {
                 delay(intervalBetweenRepeatedMessages.toMillis())
                 messages.randomOrNull()?.let { message ->
-                    eventBus.send(SendMessageEvent(channel, message))
+                    eventBus.send(
+                        SendMessageEvent(
+                            channel, message,
+                            Priority.LOW
+                        )
+                    )
                 }
             }
         }

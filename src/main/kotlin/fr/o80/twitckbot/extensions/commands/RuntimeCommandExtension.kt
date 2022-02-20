@@ -1,6 +1,8 @@
 package fr.o80.twitckbot.extensions.commands
 
 import fr.o80.twitckbot.service.config.readConfig
+import fr.o80.twitckbot.service.connectable.chat.CoolDown
+import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.service.help.Help
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.service.storage.Storage
@@ -87,15 +89,27 @@ class RuntimeCommandExtension @Inject constructor(
 
         registerRuntimeCommand(newCommand, scope, message)
         registerToHelper(newCommand)
-        eventBus.send(SendMessageEvent(commandEvent.channel, "Commande $newCommand ajoutée"))
+        eventBus.send(
+            SendMessageEvent(
+                commandEvent.channel,
+                "Commande $newCommand ajoutée",
+                Priority.IMMEDIATE
+            )
+        )
     }
 
     private suspend fun handleRegisteredCommand(
         commandEvent: CommandEvent
     ) {
         runtimeCommands[commandEvent.command.tag]?.let { message ->
-            // TODO val coolDown = CoolDown(Duration.ofSeconds(5))
-            eventBus.send(SendMessageEvent(commandEvent.channel, message))
+            eventBus.send(
+                SendMessageEvent(
+                    commandEvent.channel,
+                    message,
+                    Priority.IMMEDIATE,
+                    CoolDown.ofSeconds(5)
+                )
+            )
         }
     }
 
