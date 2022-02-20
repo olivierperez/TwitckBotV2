@@ -192,10 +192,12 @@ class FollowAnswer(
 
 @Serializable
 class UserAnswer(
+    @SerialName("data")
     val users: List<User>
 )
 
 @Serializable
 class VideoAnswer(
+    @SerialName("data")
     val videos: List<Video>
 )
