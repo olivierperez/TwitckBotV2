@@ -46,9 +46,20 @@ class TwitchApiImpl @Inject constructor(
     }
 
     override fun getFollowers(streamId: String): List<Follower> {
-        val url = "/users/follows?to_id=$streamId"
-        val answer = doRequest(url).parse<FollowAnswer>()
-        return answer.follows
+        var cursor: String? = null
+        val followers = mutableListOf<Follower>()
+
+        do {
+            val url =
+                if (cursor != null) "/users/follows?first=100&to_id=$streamId&after=$cursor"
+                else "/users/follows?first=100&to_id=$streamId"
+
+            val answer = doRequest(url).parse<FollowAnswer>()
+            followers.addAll(answer.follows)
+            cursor = answer.pagination.cursor
+        } while (cursor != null)
+
+        return followers
     }
 
     override fun getUser(userName: String): User {
@@ -187,7 +198,8 @@ class TwitchApiImpl @Inject constructor(
 @Serializable
 class FollowAnswer(
     @SerialName("data")
-    val follows: List<Follower>
+    val follows: List<Follower>,
+    val pagination: Pagination
 )
 
 @Serializable
@@ -200,4 +212,9 @@ class UserAnswer(
 class VideoAnswer(
     @SerialName("data")
     val videos: List<Video>
+)
+
+@Serializable
+class Pagination(
+    val cursor: String? = null
 )
