@@ -3,17 +3,12 @@ package fr.o80.twitckbot.service.connectable.chat
 import fr.o80.twitckbot.data.model.Auth
 import fr.o80.twitckbot.di.BotAuth
 import fr.o80.twitckbot.di.SessionScope
-import fr.o80.twitckbot.system.event.EventBus
-import fr.o80.twitckbot.system.event.SendMessageEvent
-import fr.o80.twitckbot.system.event.SendWhisperEvent
 import fr.o80.twitckbot.system.line.PrivMsgLineInterpreter
 import fr.o80.twitckbot.system.line.WhisperLineInterpreter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import org.jibble.pircbot.PircBot
 import java.util.logging.Logger
@@ -39,7 +34,7 @@ class IrcClient @Inject constructor(
     private val auth: Auth,
     private val privMsgLineInterpreter: PrivMsgLineInterpreter,
     private val whisperLineInterpreter: WhisperLineInterpreter,
-    private val eventBus: EventBus
+    private val eventBusMessenger: EventBusMessenger
 ) : PircBot(), IrcMessenger {
 
     private val ping = Ping(this)
@@ -78,20 +73,7 @@ class IrcClient @Inject constructor(
             logger.info("Chat initialized!")
             joinChannel("#gnu_coding_cafe") // TODO Join the right channel
 
-            scope.launch {
-                eventBus.events
-                    .filterIsInstance<SendMessageEvent>()
-                    .collect { event ->
-                        send(event.channel, event.message)
-                    }
-            }
-            scope.launch {
-                eventBus.events
-                    .filterIsInstance<SendWhisperEvent>()
-                    .collect { event ->
-                        send(event.channel, "/w ${event.recipient} ${event.message}")
-                    }
-            }
+            eventBusMessenger.start(this)
         } catch (e: Exception) {
             logger.severe("Something gone wrong at startup: " + e.message)
             onDisconnectCallback?.invoke()
