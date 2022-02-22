@@ -7,12 +7,12 @@ import java.time.LocalDateTime
 
 @Serializable
 data class User(
-    @SerialName("_id")
     val id: String,
     @SerialName("display_name")
     val displayName: String,
-    val name: String,
-    val logo: String
+    val login: String,
+    @SerialName("profile_image_url")
+    val profileImageUrl: String
 )
 
 @Serializable

@@ -98,7 +98,7 @@ class OverlayExtension @Inject constructor(
             EmotesLayer(
                 height = height,
                 width = width,
-                imageFactory = EmoteImageFactory(storage),
+                imageFactory = EmoteImageFactory(storage, logger),
                 config = it
             )
         }

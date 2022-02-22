@@ -52,6 +52,13 @@ dependencies {
     implementation("org.lwjgl.osgi:org.lwjgl.opengl:3.2.1.2")
     implementation("org.lwjgl.osgi:org.lwjgl.stb:3.2.1.2")
 
+    // Websockets
+    implementation("com.github.olivierperez.KotlinSlobs:lib:1.2")
+
+    implementation("io.ktor:ktor-server-core:1.6.7")
+    implementation("io.ktor:ktor-server-netty:1.6.7")
+    implementation("io.ktor:ktor-websockets:1.6.7")
+
     // Test
     testImplementation("io.mockk:mockk:1.12.1")
     testImplementation(kotlin("test"))

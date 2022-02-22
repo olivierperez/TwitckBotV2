@@ -3,6 +3,7 @@ package fr.o80.twitckbot.service.connectable.chat
 import fr.o80.twitckbot.data.model.Auth
 import fr.o80.twitckbot.di.BotAuth
 import fr.o80.twitckbot.di.SessionScope
+import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.system.line.PrivMsgLineInterpreter
 import fr.o80.twitckbot.system.line.WhisperLineInterpreter
 import kotlinx.coroutines.CoroutineScope
@@ -11,7 +12,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jibble.pircbot.PircBot
-import java.util.logging.Logger
 import javax.inject.Inject
 
 // Server constants
@@ -34,12 +34,13 @@ class IrcClient @Inject constructor(
     private val auth: Auth,
     private val privMsgLineInterpreter: PrivMsgLineInterpreter,
     private val whisperLineInterpreter: WhisperLineInterpreter,
-    private val eventBusMessenger: EventBusMessenger
+    private val eventBusMessenger: EventBusMessenger,
+    loggerFactory: LoggerFactory,
 ) : PircBot(), IrcMessenger {
 
     private val ping = Ping(this)
 
-    private val logger = Logger.getLogger("Chat Client")
+    private val logger = loggerFactory.getLogger(IrcClient::class.java.simpleName)
 
     private val initializer = TwitchChatInitChecker()
 
@@ -75,7 +76,7 @@ class IrcClient @Inject constructor(
 
             eventBusMessenger.start(this)
         } catch (e: Exception) {
-            logger.severe("Something gone wrong at startup: " + e.message)
+            logger.error("Something gone wrong at startup: " + e.message)
             onDisconnectCallback?.invoke()
         }
     }
@@ -87,7 +88,7 @@ class IrcClient @Inject constructor(
     }
 
     override fun onDisconnect() {
-        logger.warning("onDisconnect")
+        logger.warn("onDisconnect")
         super.onDisconnect()
         onDisconnectCallback?.invoke()
     }

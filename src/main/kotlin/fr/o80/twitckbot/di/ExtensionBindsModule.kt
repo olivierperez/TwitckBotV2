@@ -3,6 +3,7 @@ package fr.o80.twitckbot.di
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
+import fr.o80.twitckbot.extensions.actions.RemoteActionsExtension
 import fr.o80.twitckbot.extensions.channel.ChannelExtension
 import fr.o80.twitckbot.extensions.commands.RuntimeCommandExtension
 import fr.o80.twitckbot.extensions.help.HelpExtension
@@ -61,6 +62,10 @@ interface ExtensionBindsModule {
     @Binds
     @IntoSet
     fun bindShoutOutExtension(impl: ShoutOutExtension): Extension
+
+    @Binds
+    @IntoSet
+    fun bindRemoteActions(impl: RemoteActionsExtension): Extension
 
     @Binds
     @IntoSet

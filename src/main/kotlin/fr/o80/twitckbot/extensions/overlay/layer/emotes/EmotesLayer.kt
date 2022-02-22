@@ -46,10 +46,12 @@ class EmotesLayer(
             pointSize(20f)
             color(0f, 0f, 0f)
             emotes.forEach { emoteEntity ->
-                imageRenderer.render(
-                    image = imageFactory.getImage(emoteEntity.code),
-                    centeredPosition = emoteEntity.position
-                )
+                imageFactory.getImage(emoteEntity.code)?.let { image ->
+                    imageRenderer.render(
+                        image = image,
+                        centeredPosition = emoteEntity.position
+                    )
+                }
             }
         }
     }

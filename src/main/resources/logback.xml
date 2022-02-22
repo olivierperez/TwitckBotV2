@@ -27,5 +27,6 @@
     <logger name="io.netty" level="INFO"/>
     <logger name="org.apache.http" level="INFO"/>
     <logger name="OverlayExtension" level="DEBUG"/>
+    <logger name="fr.o80.twitckbot.extensions.actions" level="DEBUG"/>
     <logger name="fr.o80.twitckbot.internal.storage" level="DEBUG"/>
 </configuration>
