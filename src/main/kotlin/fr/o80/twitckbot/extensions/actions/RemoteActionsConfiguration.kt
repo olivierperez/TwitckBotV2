@@ -6,8 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class RemoteActionsConfiguration(
     val channel: ChannelName,
-    val slobsHost: String,
-    val slobsPort: Int,
-    val slobsToken: String,
     val actionsPort: Int
 )

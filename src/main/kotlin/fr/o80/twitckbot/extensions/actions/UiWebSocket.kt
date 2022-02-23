@@ -1,6 +1,5 @@
 package fr.o80.twitckbot.extensions.actions
 
-import fr.o80.slobs.SlobsClient
 import fr.o80.twitckbot.extensions.actions.model.Config
 import fr.o80.twitckbot.extensions.actions.model.RemoteAction
 import fr.o80.twitckbot.extensions.actions.model.Scene
@@ -14,8 +13,11 @@ import fr.o80.twitckbot.system.event.CommandEvent
 import fr.o80.twitckbot.system.event.EmotesEvent
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.SendMessageEvent
+import fr.o80.twitckbot.system.event.SlobsConfigEvent
+import fr.o80.twitckbot.system.event.SwitchSceneEvent
 import io.ktor.application.*
 import io.ktor.http.cio.websocket.*
+import io.ktor.network.sockets.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -23,7 +25,7 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -37,11 +39,14 @@ private inline fun <reified T : Any> String.parse(): T {
     return webSocketSerializer.decodeFromString<T>(this)
 }
 
+private inline fun <reified T : Any> T.encodeToString(): String {
+    return webSocketSerializer.encodeToString(this)
+}
+
 class UiWebSocket(
     private val channel: String,
     private val port: Int,
     private val store: RemoteActionStore,
-    private val slobsClient: SlobsClient,
     private val eventBus: EventBus,
     private val logger: Logger,
     private val getBroadcaster: GetBroadcaster
@@ -51,19 +56,21 @@ class UiWebSocket(
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
+    private var lastSceneStatus: Status = Status("")
+    private var slobsScenes: List<Scene> = emptyList()
+
     init {
         scope.launch {
-            slobsClient.connect()
-
-            launch(Dispatchers.IO) {
-                while (true) {
-                    slobsClient.onSceneSwitched().consumeEach { scene ->
-                        logger.info("Scene switched: ${scene.name}")
-                        val statusJson = getStatusJson(scene.id)
+            eventBus.events.collect { event ->
+                when (event) {
+                    is SlobsConfigEvent -> {
+                        slobsScenes = event.scenes.map { Scene(it.id, it.name) }
+                        lastSceneStatus = Status(currentSceneId = event.activeScene.id)
                         dispatch { session ->
-                            session.send("""Status:$statusJson""")
+                            session.send("""Status:${lastSceneStatus.encodeToString()}""")
                         }
                     }
+                    else -> {}
                 }
             }
         }
@@ -152,7 +159,7 @@ class UiWebSocket(
 
     private suspend fun onConfigRequested(session: DefaultWebSocketServerSession) {
         session.send("Config:${getConfigJson()}")
-        session.send("Status:${getStatusJson(slobsClient.getActiveScene().id)}")
+        session.send("Status:${lastSceneStatus.encodeToString()}")
     }
 
     private suspend fun onImageRequested(
@@ -174,15 +181,8 @@ class UiWebSocket(
 
     private suspend fun getConfigJson(): String {
         val actions = store.getActions()
-        val scenes = slobsClient.getScenes().map { Scene(it.id, it.name) }
-
-        val config = Config(actions, scenes)
-        return webSocketSerializer.encodeToString(config)
-    }
-
-    private fun getStatusJson(sceneId: String): String {
-        val status = Status(currentSceneId = sceneId)
-        return webSocketSerializer.encodeToString(status)
+        val config = Config(actions, slobsScenes)
+        return config.encodeToString()
     }
 
     private suspend fun onNewAction(newActionJson: String) {
@@ -216,7 +216,7 @@ class UiWebSocket(
     }
 
     private suspend fun onScene(sceneId: String) {
-        slobsClient.switchTo(sceneId)
+        eventBus.send(SwitchSceneEvent(sceneId))
     }
 
     private suspend fun getActionsJson(): String {

@@ -1,5 +1,6 @@
 package fr.o80.twitckbot.system.event
 
+import fr.o80.slobs.model.Scene
 import fr.o80.twitckbot.service.connectable.chat.CoolDown
 import fr.o80.twitckbot.service.connectable.chat.Priority
 import fr.o80.twitckbot.system.bean.Command
@@ -67,4 +68,13 @@ class WhisperEvent(
     val destination: String,
     val viewer: Viewer,
     val message: String
+) : Event
+
+class SwitchSceneEvent(
+    val sceneId: String
+) : Event
+
+class SlobsConfigEvent(
+    val scenes: List<Scene>,
+    val activeScene: Scene
 ) : Event

@@ -4,7 +4,7 @@ import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.connectable.Connectable
 import fr.o80.twitckbot.service.connectable.ConnectableStatus
 import fr.o80.twitckbot.service.connectable.chat.TwitchChat
-import fr.o80.twitckbot.service.connectable.obs.ObsStudio
+import fr.o80.twitckbot.service.connectable.slobs.SlobsConnectable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @SessionScope
 class ConnectablesManager @Inject constructor(
-    obsStudio: ObsStudio,
+    obsStudio: SlobsConnectable,
     twitchChat: TwitchChat
 ) {
 
