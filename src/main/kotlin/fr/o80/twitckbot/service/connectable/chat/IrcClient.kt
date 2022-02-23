@@ -3,13 +3,13 @@ package fr.o80.twitckbot.service.connectable.chat
 import fr.o80.twitckbot.data.model.Auth
 import fr.o80.twitckbot.di.BotAuth
 import fr.o80.twitckbot.di.SessionScope
+import fr.o80.twitckbot.service.connectable.Retrier
 import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.system.line.PrivMsgLineInterpreter
 import fr.o80.twitckbot.system.line.WhisperLineInterpreter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jibble.pircbot.PircBot
 import javax.inject.Inject
@@ -66,15 +66,18 @@ class IrcClient @Inject constructor(
             logger.info("Requesting twitch tags capability for PRIVMSG/USERSTATE/GLOBALUSERSTATE messages... ")
             sendRawLine(SERVER_TAGREG)
 
-            while (!initializer.initialized) {
-                delay(1000)
-                if (!initializer.initialized) logger.info("Not yet initialized")
-            }
-
-            logger.info("Chat initialized!")
-            joinChannel("#gnu_coding_cafe") // TODO Join the right channel
-
-            eventBusMessenger.start(this)
+            val retrier = Retrier(logger, "Initializing") { initializer.initialized }
+            retrier.start(
+                onSuccess = {
+                    logger.info("Chat initialized!")
+                    joinChannel("#gnu_coding_cafe") // TODO Join the right channel
+                    eventBusMessenger.start(this)
+                },
+                onFail = {
+                    if (isConnected) disconnect()
+                    onDisconnectCallback?.invoke()
+                }
+            )
         } catch (e: Exception) {
             logger.error("Something gone wrong at startup: " + e.message)
             onDisconnectCallback?.invoke()
