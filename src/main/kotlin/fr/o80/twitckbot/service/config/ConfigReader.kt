@@ -7,7 +7,6 @@ import java.io.File
 const val CONFIG_DIR = ".config"
 
 val configDeserializer = Json {
-    prettyPrint = true
     ignoreUnknownKeys = true
 }
 

@@ -5,6 +5,7 @@ import fr.o80.twitckbot.data.model.FullAuth
 import fr.o80.twitckbot.javascriptHashRedirection
 import fr.o80.twitckbot.oauthEndpoint
 import fr.o80.twitckbot.oauthRedirectUri
+import fr.o80.twitckbot.service.oauth.model.AuthResponse
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
@@ -12,12 +13,6 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.pipeline.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import org.apache.http.client.HttpClient
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.util.EntityUtils
 import java.net.URI
 import java.time.Duration
 import java.time.Instant
@@ -27,7 +22,8 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
 class AuthenticateOnTwitch @Inject constructor(
-    private val authStorage: AuthStorage
+    private val authStorage: AuthStorage,
+    private val authenticateBroadcaster: AuthenticateBroadcaster
 ) {
 
     operator fun invoke(
@@ -45,14 +41,12 @@ class AuthenticateOnTwitch @Inject constructor(
                 }
                 get("capture") {
                     try {
-                        val authResponse = capture(clientId, clientSecret)
-                        FullAuth(
-                            authResponse.botAuthentication.toAuth(),
-                            authResponse.broadcasterAuthentication.toAuth(),
-                        ).let { fullAuth ->
-                            authStorage.store(fullAuth)
-                            onAuthCompleted(fullAuth)
-                        }
+                        val botAuth = this.capture()
+                        val broadcasterAuth = authenticateBroadcaster(clientId, clientSecret)
+                        val fullAuth = FullAuth(botAuth.toAuth(), broadcasterAuth.toAuth())
+
+                        authStorage.store(fullAuth)
+                        onAuthCompleted(fullAuth)
                     } catch (e: Exception) {
                         onAuthFailed(e)
                     }
@@ -93,47 +87,17 @@ class AuthenticateOnTwitch @Inject constructor(
         )
     }
 
-    private fun PipelineContext<Unit, ApplicationCall>.capture(
-        clientId: String,
-        clientSecret: String
-    ): FullAuthentication {
+    private fun PipelineContext<Unit, ApplicationCall>.capture(): AuthResponse {
         val accessToken = context.request.queryParameters["access_token"]!!
         val scopes = context.request.queryParameters["scope"]!!
         val tokenType = context.request.queryParameters["token_type"]!!
 
-        return FullAuthentication(
-            botAuthentication = AuthResponse(
-                accessToken,
-                tokenType,
-                expiresIn = 31_536_000,
-                scopes.split(' ')
-            ),
-            broadcasterAuthentication = auth(clientId, clientSecret)
+        return AuthResponse(
+            accessToken,
+            tokenType,
+            expiresIn = 31_536_000,
+            scopes.split(' ')
         )
-    }
-
-    private fun auth(clientId: String, clientSecret: String): AuthResponse {
-        val client: HttpClient = HttpClients.createDefault()
-        val scopes = listOf(
-            "bits:read",
-            "chat:read",
-            "channel:moderate",
-            "channel:read:hype_train",
-            "channel:read:redemptions",
-            "channel:read:subscriptions",
-            "channel_subscriptions"
-        )
-        val post = HttpPost(
-            "https://id.twitch.tv/oauth2/token" +
-                "?client_id=$clientId" +
-                "&client_secret=$clientSecret" +
-                "&grant_type=client_credentials" +
-                "&scope=${scopes.joinToString("%20")}"
-        )
-
-        val response = client.execute(post)
-        val responseStr = EntityUtils.toString(response.entity)
-        return Json.decodeFromString<AuthResponse>(responseStr)
     }
 
 }

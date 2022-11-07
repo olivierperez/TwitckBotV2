@@ -1,13 +1,7 @@
-package fr.o80.twitckbot.service.oauth
+package fr.o80.twitckbot.service.oauth.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class FullAuthentication(
-    val botAuthentication: AuthResponse,
-    val broadcasterAuthentication: AuthResponse,
-)
 
 @Serializable
 data class AuthResponse(

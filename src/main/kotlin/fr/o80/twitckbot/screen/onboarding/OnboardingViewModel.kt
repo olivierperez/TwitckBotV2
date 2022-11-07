@@ -1,8 +1,9 @@
 package fr.o80.twitckbot.screen.onboarding
 
+import fr.o80.twitckbot.data.model.Config
 import fr.o80.twitckbot.data.model.FullAuth
+import fr.o80.twitckbot.service.config.LoadConfig
 import fr.o80.twitckbot.service.oauth.AuthenticateOnTwitch
-import fr.o80.twitckbot.service.oauth.LoadAuthentication
 import fr.o80.twitckbot.service.system.BrowseUrl
 import fr.o80.twitckbot.service.system.CopyToClipboard
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 class OnboardingViewModel @Inject constructor(
     private val authenticateOnTwitch: AuthenticateOnTwitch,
-    private val loadAuthentication: LoadAuthentication,
+    private val loadConfig: LoadConfig,
     private val browseUrl: BrowseUrl,
     private val copyToClipboard: CopyToClipboard
 ) {
@@ -19,15 +20,12 @@ class OnboardingViewModel @Inject constructor(
     val state: StateFlow<UiState> get() = _state
     private val _state: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
 
-    val fullAuth: StateFlow<FullAuth?> get() = _fullAuth
-    private val _fullAuth: MutableStateFlow<FullAuth?> = MutableStateFlow(null)
-
     fun init() {
-        val auth = loadAuthentication.invoke()
-        if (auth != null) {
-            _fullAuth.value = auth
+        val config = loadConfig()
+        if (config.isComplete()) {
+            _state.value = UiState.Loaded(config)
         } else {
-            _state.value = UiState.AuthenticationForm
+            _state.value = UiState.AuthenticationForm(config.broadcasterName, config.auth)
         }
     }
 
@@ -59,6 +57,14 @@ class OnboardingViewModel @Inject constructor(
 
     sealed interface UiState {
         object Loading : UiState
-        object AuthenticationForm : UiState
+
+        class Loaded(
+            val config: Config
+        ) : UiState
+
+        class AuthenticationForm(
+            val broadcasterName: String?,
+            val fullAuth: FullAuth?
+        ) : UiState
     }
 }

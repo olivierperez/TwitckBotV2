@@ -7,3 +7,6 @@ annotation class BotAuth
 
 @Qualifier
 annotation class BroadcasterAuth
+
+@Qualifier
+annotation class BroadcasterName

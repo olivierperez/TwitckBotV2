@@ -3,7 +3,6 @@ package fr.o80.twitckbot.navigation
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.extensions.compose.jetbrains.Children
-import com.arkivanov.decompose.extensions.compose.jetbrains.animation.child.crossfade
 import com.arkivanov.decompose.router.push
 import com.arkivanov.decompose.router.router
 import com.arkivanov.essenty.parcelable.Parcelable
@@ -36,10 +35,10 @@ class NavHostComponent(
         return when (screenConfig) {
             is ScreenConfig.Onboarding -> OnboardingComponent(
                 rootComponent,
-                onAuthentication = {
+                onAuthentication = { config ->
                     authenticatedComponent =
                         rootComponent.authenticatedComponentBuilder
-                            .withAuth(it)
+                            .withConfig(config)
                             .build()
                     router.push(ScreenConfig.Dashboard)
                 }
@@ -55,8 +54,7 @@ class NavHostComponent(
     @Composable
     override fun render() {
         Children(
-            routerState = router.state,
-            animation = crossfade()
+            routerState = router.state
         ) {
             it.instance.render()
         }

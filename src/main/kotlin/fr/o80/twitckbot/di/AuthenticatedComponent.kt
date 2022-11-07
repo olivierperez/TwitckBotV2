@@ -2,7 +2,7 @@ package fr.o80.twitckbot.di
 
 import dagger.BindsInstance
 import dagger.Subcomponent
-import fr.o80.twitckbot.data.model.FullAuth
+import fr.o80.twitckbot.data.model.Config
 import fr.o80.twitckbot.screen.dashboard.DashboardComponent
 
 @SessionScope
@@ -18,7 +18,7 @@ interface AuthenticatedComponent {
     @Subcomponent.Builder
     interface Builder {
         @BindsInstance
-        fun withAuth(fullAuth: FullAuth): Builder
+        fun withConfig(config: Config): Builder
 
         fun build(): AuthenticatedComponent
     }

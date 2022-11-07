@@ -3,10 +3,10 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("kapt") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
-    id("org.jetbrains.compose") version "1.0.1"
+    kotlin("jvm") version "1.7.20"
+    kotlin("kapt") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.20"
+    id("org.jetbrains.compose") version "1.2.0"
 }
 
 group = "fr.o80.twitckbot"
@@ -24,8 +24,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
 
     // Decompose
-    implementation("com.arkivanov.decompose:decompose:0.4.0")
-    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.4.0")
+    implementation("com.arkivanov.decompose:decompose:0.8.0")
+    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.8.0")
 
     // Oauth: Ktor + OauthClient + HttpClient
     implementation("io.ktor:ktor-server-core:1.6.7")
@@ -37,14 +37,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     // Dependency injection
-    implementation("com.google.dagger:dagger:2.40.5")
-    kapt("com.google.dagger:dagger-compiler:2.40.5")
+    implementation("com.google.dagger:dagger:2.44")
+    kapt("com.google.dagger:dagger-compiler:2.44")
 
     // IRC
     implementation("pircbot:pircbot:1.5.0")
 
     // Log
-    implementation("ch.qos.logback:logback-classic:1.2.10")
+    implementation("ch.qos.logback:logback-classic:1.4.4")
 
     // LWJGL
     implementation("org.lwjgl:lwjgl:3.2.1")
@@ -60,7 +60,7 @@ dependencies {
     implementation("io.ktor:ktor-websockets:1.6.7")
 
     // Test
-    testImplementation("io.mockk:mockk:1.12.1")
+    testImplementation("io.mockk:mockk:1.13.2")
     testImplementation(kotlin("test"))
 }
 

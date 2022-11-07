@@ -2,24 +2,25 @@ package fr.o80.twitckbot.service.oauth
 
 import fr.o80.twitckbot.data.model.Auth
 import fr.o80.twitckbot.data.model.FullAuth
+import fr.o80.twitckbot.service.config.LoadConfig
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Duration
 import java.time.Instant
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("Load authentication use case")
 internal class LoadAuthenticationTest {
 
     @InjectMockKs
-    lateinit var loadAuthentication: LoadAuthentication
+    lateinit var loadConfig: LoadConfig
 
     @MockK
     lateinit var authStorage: AuthStorage
@@ -31,10 +32,10 @@ internal class LoadAuthenticationTest {
         every { authStorage.readAuth() } returns null
 
         // When
-        val auth = loadAuthentication()
+        val auth = loadConfig()
 
         // Then
-        assertNull(auth)
+        assertFalse(auth.isComplete())
     }
 
     @Test
@@ -57,10 +58,10 @@ internal class LoadAuthenticationTest {
         )
 
         // When
-        val auth = loadAuthentication()
+        val config = loadConfig()
 
         // Then
-        assertNull(auth)
+        assertFalse(config.isComplete())
     }
 
     @Test
@@ -83,7 +84,7 @@ internal class LoadAuthenticationTest {
         )
 
         // When
-        val auth = loadAuthentication()
+        val auth = loadConfig()
 
         // Then
         assertNotNull(auth)
