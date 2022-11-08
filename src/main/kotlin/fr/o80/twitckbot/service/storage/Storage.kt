@@ -9,7 +9,7 @@ interface Storage {
 
     suspend fun putGlobalInfo(namespace: String, key: String, value: String)
     suspend fun getGlobalInfo(namespace: String): List<Pair<String, String>>
-    //fun getGlobalInfo(namespace: String, key: String): String?
+    suspend fun getGlobalInfo(namespace: String, key: String): String?
 
     fun getPathOf(path: String, file: String): File
 }

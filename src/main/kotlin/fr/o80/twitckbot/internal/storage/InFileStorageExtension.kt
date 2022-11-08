@@ -1,6 +1,5 @@
 package fr.o80.twitckbot.internal.storage
 
-import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.internal.storage.bean.Global
 import fr.o80.twitckbot.internal.storage.bean.User
 import fr.o80.twitckbot.service.log.LoggerFactory
@@ -21,7 +20,6 @@ private inline fun <reified T : Any> String.parse(): T {
     return storageSerializer.decodeFromString<T>(this)
 }
 
-@SessionScope
 class InFileStorageExtension @Inject constructor(
     loggerFactory: LoggerFactory,
     private val sanitizer: FileNameSanitizer
@@ -84,6 +82,12 @@ class InFileStorageExtension @Inject constructor(
         lock.withLock {
             logger.trace("Getting all info [$namespace]")
             return getOrCreateGlobal().getExtras(namespace)
+        }
+
+    override suspend fun getGlobalInfo(namespace: String, key: String): String? =
+        lock.withLock {
+            logger.trace("Getting info [$namespace//$key]")
+            return getOrCreateGlobal().getExtras(namespace).firstOrNull { it.first == key}?.second
         }
 
     override fun getPathOf(path: String, file: String): File {

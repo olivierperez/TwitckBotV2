@@ -34,11 +34,11 @@ class OnboardingComponent(
         }
 
         val state by viewModel.state.collectAsState()
-        render(state)
+        OnboardingContent(state)
     }
 
     @Composable
-    private fun render(state: OnboardingViewModel.UiState) {
+    private fun OnboardingContent(state: OnboardingViewModel.UiState) {
         when (state) {
             is OnboardingViewModel.UiState.AuthenticationForm -> AuthenticationForm(
                 state.broadcasterName,
@@ -62,6 +62,7 @@ class OnboardingComponent(
             fullAuth,
             onAuthorizationClicked = { streamerName, port, clientId, clientSecret ->
                 viewModel.authenticate(
+                    streamerName,
                     port,
                     clientId,
                     clientSecret,
@@ -73,6 +74,7 @@ class OnboardingComponent(
             },
             onCopyAuthorizationUrlClicked = { streamerName, port, clientId, clientSecret ->
                 viewModel.copyAuthorizationUrl(
+                    streamerName,
                     port,
                     clientId,
                     clientSecret,

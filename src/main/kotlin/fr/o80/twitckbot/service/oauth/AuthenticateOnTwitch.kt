@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
 class AuthenticateOnTwitch @Inject constructor(
-    private val authStorage: AuthStorage,
     private val authenticateBroadcaster: AuthenticateBroadcaster
 ) {
 
@@ -45,7 +44,6 @@ class AuthenticateOnTwitch @Inject constructor(
                         val broadcasterAuth = authenticateBroadcaster(clientId, clientSecret)
                         val fullAuth = FullAuth(botAuth.toAuth(), broadcasterAuth.toAuth())
 
-                        authStorage.store(fullAuth)
                         onAuthCompleted(fullAuth)
                     } catch (e: Exception) {
                         onAuthFailed(e)
