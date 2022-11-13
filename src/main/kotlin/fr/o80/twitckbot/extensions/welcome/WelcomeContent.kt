@@ -1,11 +1,12 @@
 package fr.o80.twitckbot.extensions.welcome
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,12 +30,11 @@ fun WelcomeContent(
             )
 
             if (lastWelcomed.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Personne")
-                }
+                Icon(
+                    modifier = Modifier.weight(1f),
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Loaded"
+                )
             } else {
                 lastWelcomed.forEach { login ->
                     Text(login)

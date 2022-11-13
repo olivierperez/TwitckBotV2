@@ -51,6 +51,9 @@ class WelcomeExtension @Inject constructor(
         get() = listOf(WelcomeBloc())
 
     inner class WelcomeBloc : ExtensionBloc {
+        override val id: String = "Welcome.WelcomedPersons"
+        override val priority: Int = 10
+
         @Composable
         override fun render(modifier: Modifier) {
             val lastWelcomed by lastWelcomed.collectAsState()

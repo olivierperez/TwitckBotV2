@@ -52,7 +52,9 @@ fun Dashboard(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val blocs = state.extensions.flatMap(Extension::blocs)
+            val blocs = state.extensions
+                .flatMap(Extension::blocs)
+                .sortedWith(ExtensionBlocComparator())
             items(blocs) { extensionBloc ->
                 extensionBloc.render(Modifier.size(200.dp))
             }
