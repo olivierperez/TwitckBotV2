@@ -17,7 +17,6 @@ import fr.o80.twitckbot.system.event.CommandEvent
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.MessageEvent
 import fr.o80.twitckbot.system.event.SendMessageEvent
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import java.time.Duration

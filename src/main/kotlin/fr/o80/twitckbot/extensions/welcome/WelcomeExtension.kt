@@ -1,5 +1,9 @@
 package fr.o80.twitckbot.extensions.welcome
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.service.config.readConfig
 import fr.o80.twitckbot.service.connectable.chat.Priority
@@ -8,6 +12,7 @@ import fr.o80.twitckbot.service.time.TimeChecker
 import fr.o80.twitckbot.service.time.TimeCheckerFactory
 import fr.o80.twitckbot.service.twitch.TwitchApi
 import fr.o80.twitckbot.system.Extension
+import fr.o80.twitckbot.system.ExtensionBloc
 import fr.o80.twitckbot.system.bean.Badge
 import fr.o80.twitckbot.system.bean.Follower
 import fr.o80.twitckbot.system.bean.Viewer
@@ -16,8 +21,9 @@ import fr.o80.twitckbot.system.event.MessageEvent
 import fr.o80.twitckbot.system.event.SendMessageEvent
 import fr.o80.twitckbot.system.step.StepParams
 import fr.o80.twitckbot.system.step.StepsExecutor
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
@@ -38,6 +44,21 @@ class WelcomeExtension @Inject constructor(
     private val followers: List<Follower>
 
     private val welcomeTimeChecker: TimeChecker
+
+    private val lastWelcomed: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+
+    override val blocs: List<ExtensionBloc>
+        get() = listOf(WelcomeBloc())
+
+    inner class WelcomeBloc : ExtensionBloc {
+        @Composable
+        override fun render(modifier: Modifier) {
+            val lastWelcomed by lastWelcomed.collectAsState()
+
+            WelcomeContent(modifier, lastWelcomed)
+        }
+
+    }
 
     init {
         logger.info("Initializing")
@@ -82,6 +103,7 @@ class WelcomeExtension @Inject constructor(
                 welcomeViewer(channel, viewer)
                 val stepParam = StepParams(config.channel.name, viewer)
                 stepsExecutor.execute(config.onWelcome, stepParam)
+                lastWelcomed.update { (it + viewer.login).takeLast(5) }
             }
         }
     }
