@@ -27,8 +27,9 @@ dependencies {
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.8.0")
 
     // Oauth: Ktor + OauthClient + HttpClient
-    implementation("io.ktor:ktor-server-core:1.6.7")
-    implementation("io.ktor:ktor-server-netty:1.6.7")
+    implementation("io.ktor:ktor-server-core:1.6.8")
+    implementation("io.ktor:ktor-server-netty:1.6.8")
+    implementation("io.ktor:ktor-websockets:1.6.8")
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
 
     // Serialization
@@ -53,10 +54,6 @@ dependencies {
 
     // Websockets
     implementation("com.github.olivierperez.KotlinSlobs:lib:1.2")
-
-    implementation("io.ktor:ktor-server-core:1.6.7")
-    implementation("io.ktor:ktor-server-netty:1.6.7")
-    implementation("io.ktor:ktor-websockets:1.6.7")
 
     // Test
     testImplementation("io.mockk:mockk:1.13.2")
