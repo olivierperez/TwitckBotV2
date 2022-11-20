@@ -14,15 +14,15 @@ class CoolDownManager @Inject constructor() {
         coolDown: CoolDown?,
         block: () -> Unit
     ) {
-        if (!isCoolingDown(namespace, key)) {
+        if (hasCooledDown(namespace, key)) {
             startCoolDown(namespace, key, coolDown)
             block()
         }
     }
 
-    private fun isCoolingDown(namespace: String, key: String): Boolean {
+    private fun hasCooledDown(namespace: String, key: String): Boolean {
         val expiry = coolDowns["$namespace::$key"]
-        return expiry != null && LocalDateTime.now().isBefore(expiry)
+        return expiry == null || LocalDateTime.now().isAfter(expiry)
     }
 
     private fun startCoolDown(namespace: String, key: String, coolDown: CoolDown?) {

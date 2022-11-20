@@ -34,11 +34,11 @@ data class FollowsEvent(
     val followers: NewFollowers
 )
 
-class OverlayEvent(
+data class OverlayEvent(
     val text: String
 ) : Event
 
-class MessageEvent(
+data class MessageEvent(
     val channel: String,
     val viewer: Viewer,
     val message: String
@@ -51,30 +51,30 @@ data class RewardEvent(
     val viewer: Viewer
 ) : Event
 
-class SendMessageEvent(
+data class SendMessageEvent(
     val channel: String,
     val message: String,
     val priority: Priority,
     val coolDown: CoolDown? = null,
 ) : Event
 
-class SendWhisperEvent(
+data class SendWhisperEvent(
     val channel: String,
     val recipient: String,
     val message: String,
 ) : Event
 
-class WhisperEvent(
+data class WhisperEvent(
     val destination: String,
     val viewer: Viewer,
     val message: String
 ) : Event
 
-class SwitchSceneEvent(
+data class SwitchSceneEvent(
     val sceneId: String
 ) : Event
 
-class SlobsConfigEvent(
+data class SlobsConfigEvent(
     val scenes: List<Scene>,
     val activeScene: Scene
 ) : Event

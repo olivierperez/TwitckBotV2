@@ -80,6 +80,7 @@ class WelcomeExtension @Inject constructor(
             if (config.reactTo.messages) {
                 scope.launch {
                     eventBus.events.filterIsInstance<MessageEvent>().collect { event ->
+                        logger.debug("Handling event: $event")
                         handleNewViewer(event.channel, event.viewer)
                     }
                 }

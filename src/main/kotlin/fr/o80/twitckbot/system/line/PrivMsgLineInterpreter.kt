@@ -26,6 +26,7 @@ class PrivMsgLineInterpreter @Inject constructor(
         "^@([^ ]+) :([^!]+)![^@]+@[^.]+\\.tmi\\.twitch\\.tv PRIVMSG (#[^ ]+) :(.+)$".toRegex()
 
     override suspend fun handle(line: String) {
+        logger.trace("Handling line: $line")
         regex.find(line)?.let { matchResult ->
             val tags = Tags.from(matchResult.groupValues[1])
             val user = matchResult.groupValues[2]
@@ -40,7 +41,6 @@ class PrivMsgLineInterpreter @Inject constructor(
                 color = tags.color
             )
 
-            eventBus.send(MessageEvent(channel, viewer, message))
             val command = commandParser.parse(message)
 
             tags.bits?.let { bits ->
