@@ -1,0 +1,48 @@
+[versions]
+compose-plugin = "1.6.11"
+dagger = "2.48"
+decompose = "0.8.0"
+httpClient = "4.5.13"
+kotlin = "2.0.20"
+ktor = "2.3.12"
+logback = "1.4.14"
+lwjgl = "3.2.1"
+lwjgl-module = "3.2.1.2"
+pircbot = "1.5.0"
+slobs = "1.2"
+
+[plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+dagger = { id = "com.google.devtools.ksp", version = "2.0.20-1.0.25" }
+
+[libraries]
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+
+decomposeBase = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decomposeExtensions = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
+
+ktor-serverCore = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-serverNetty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+ktor-httpClient = { module = "org.apache.httpcomponents:httpclient", version.ref = "httpClient" }
+
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+lwjgl = { module = "org.lwjgl:lwjgl", version.ref = "lwjgl" }
+lwjgl-glfw = { module = "org.lwjgl.osgi:org.lwjgl.glfw", version.ref = "lwjgl-module" }
+lwjgl-opengl = { module = "org.lwjgl.osgi:org.lwjgl.opengl", version.ref = "lwjgl-module" }
+lwjgl-std = { module = "org.lwjgl.osgi:org.lwjgl.stb", version.ref = "lwjgl-module" }
+
+pircbot = { module = "pircbot:pircbot", version.ref = "pircbot" }
+
+serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.3" }
+
+slobs = { module = "com.github.olivierperez.KotlinSlobs:lib", version.ref = "slobs" }
+
+[bundles]
+decompose = ["decomposeBase", "decomposeExtensions"]
+ktor = ["ktor-serverCore", "ktor-serverNetty", "ktor-websockets", "ktor-httpClient"]
+lwjgl = ["lwjgl", "lwjgl-glfw", "lwjgl-opengl", "lwjgl-std"]

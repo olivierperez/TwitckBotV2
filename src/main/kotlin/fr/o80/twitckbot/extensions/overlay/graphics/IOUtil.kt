@@ -21,7 +21,7 @@ object IOUtil {
      * @throws IOException if an IO error occurs
      */
     @Throws(IOException::class)
-    fun ioResourceToByteBuffer(resource: String?, bufferSize: Int): ByteBuffer {
+    fun ioResourceToByteBuffer(resource: String, bufferSize: Int): ByteBuffer {
         var buffer: ByteBuffer
         val path = Paths.get(resource)
         if (Files.isReadable(path)) {

@@ -259,7 +259,7 @@ class TextRenderer(
                 return 2
             }
         }
-        cpOut.put(0, c1.toInt())
+        cpOut.put(0, c1.code)
         return 1
     }
 }

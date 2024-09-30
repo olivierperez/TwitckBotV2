@@ -48,11 +48,11 @@ class TwitchApiImpl @Inject constructor(
     override fun getFollowers(streamId: String): List<Follower> {
         var cursor: String? = null
         val followers = mutableListOf<Follower>()
-
+""
         do {
             val url =
-                if (cursor != null) "/users/follows?first=100&to_id=$streamId&after=$cursor"
-                else "/users/follows?first=100&to_id=$streamId"
+                if (cursor != null) "/channels/followers?first=100&broadcaster_id=$streamId&after=$cursor"
+                else "/channels/followers?first=100&broadcaster_id=$streamId"
 
             val answer = doRequest(url).parse<FollowAnswer>()
             followers.addAll(answer.follows)

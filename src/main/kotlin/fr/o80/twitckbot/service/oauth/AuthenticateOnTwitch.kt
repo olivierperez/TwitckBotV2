@@ -6,12 +6,12 @@ import fr.o80.twitckbot.javascriptHashRedirection
 import fr.o80.twitckbot.oauthEndpoint
 import fr.o80.twitckbot.oauthRedirectUri
 import fr.o80.twitckbot.service.oauth.model.AuthResponse
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 import java.net.URI
 import java.time.Duration

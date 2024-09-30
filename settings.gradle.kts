@@ -1,3 +1,5 @@
+rootProject.name = "TwitckBotV2"
+
 pluginManagement {
     repositories {
         google()
@@ -5,5 +7,3 @@ pluginManagement {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
-rootProject.name = "TwitckBot2"
-
