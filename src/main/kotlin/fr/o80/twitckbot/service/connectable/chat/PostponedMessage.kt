@@ -2,7 +2,7 @@ package fr.o80.twitckbot.service.connectable.chat
 
 import java.time.Duration
 
-class PostponedMessage(
+data class PostponedMessage(
     val channel: String,
     val content: String,
     val priority: Priority

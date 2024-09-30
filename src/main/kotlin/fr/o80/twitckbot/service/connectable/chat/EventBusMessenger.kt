@@ -2,13 +2,13 @@ package fr.o80.twitckbot.service.connectable.chat
 
 import fr.o80.twitckbot.di.SessionScope
 import fr.o80.twitckbot.internal.time.CoolDownManager
+import fr.o80.twitckbot.service.log.LoggerFactory
 import fr.o80.twitckbot.system.event.EventBus
 import fr.o80.twitckbot.system.event.SendMessageEvent
 import fr.o80.twitckbot.system.event.SendWhisperEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.time.delay
@@ -23,9 +23,12 @@ private const val COOL_DOWN_NAMESPACE = "EventBusMessenger"
 class EventBusMessenger @Inject constructor(
     private val eventBus: EventBus,
     private val coolDownManager: CoolDownManager,
+    loggerFactory: LoggerFactory,
 ) {
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
+    private val logger = loggerFactory.getLogger(EventBusMessenger::class.java.simpleName)
 
     private var ircMessenger: IrcMessenger? = null
 
@@ -63,6 +66,7 @@ class EventBusMessenger @Inject constructor(
                         ircMessenger?.send(event.channel, event.message)
                     } else {
                         messagesToSend.offer(event.toPostponedMessage())
+                        logger.info("Awaiting messages: \n${messagesToSend.joinToString { "$it\n" }}")
                     }
                 }
             }
