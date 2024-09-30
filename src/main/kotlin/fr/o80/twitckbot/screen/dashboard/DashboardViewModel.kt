@@ -1,21 +1,22 @@
 package fr.o80.twitckbot.screen.dashboard
 
 import fr.o80.twitckbot.di.SessionScope
+import fr.o80.twitckbot.screen.ViewModel
 import fr.o80.twitckbot.service.connectable.ConnectableStatus
 import fr.o80.twitckbot.system.ConnectablesManager
 import fr.o80.twitckbot.system.Extension
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,23 +25,23 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val connectablesManager: ConnectablesManager,
     private val extensions: @JvmSuppressWildcards Set<Extension>
-) {
+): ViewModel() {
 
     sealed interface Effect {
-        object Loading : Effect
-        class Retry(val name: String) : Effect
+        data object Loading : Effect
+        data class Retry(val name: String) : Effect
     }
 
     sealed interface Action {
-        class SetConnectableStates(
+        data class SetConnectableStates(
             val connectableStates: List<ConnectableState>
         ) : Action
 
-        class SetExtensions(
+        data class SetExtensions(
             val extensions: Collection<Extension>
         ) : Action
 
-        class UpdateConnectableStatus(
+        data class UpdateConnectableStatus(
             val name: String,
             val status: ConnectableStatus
         ) : Action
@@ -58,29 +59,31 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private val effects = MutableStateFlow<Effect>(Effect.Loading)
-    private val actionsFromEffects = effects.transform { effect -> emitAll(execute(effect)) }
+    private val effects = MutableSharedFlow<Effect>()
     private val actions = MutableSharedFlow<Action>()
 
-    val state: Flow<State> = merge(actionsFromEffects, actions)
-        .scan(State.EMPTY) { state, action -> reduce(action, state) }
-        .catch {
-            // TODO Handle errors
-            emit(State.EMPTY)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state: Flow<State> = flowOf(State.EMPTY)
+        .flatMapMerge {
+            merge(
+                effects.transform { effect -> emitAll(execute(effect)) },
+                actions
+            )
         }
+        .scan(State.EMPTY) { state, action -> reduce(action, state) }
+        .catch { emit(State.EMPTY) } /* TODO Handle errors */
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = State.EMPTY
+        )
 
-    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-
-    init {
+    override fun init() {
         scope.launch {
+            effects.emit(Effect.Loading)
             connectablesManager.statuses().collect { (connectable, status) ->
                 actions.emit(Action.UpdateConnectableStatus(connectable.name, status))
             }
-        }
-
-        // TODO Mettre ça dans l'Effect de chargement
-        scope.launch {
-
         }
     }
 
@@ -99,7 +102,6 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    @Suppress("unused_parameter")
     private fun Action.SetConnectableStates.reduce(state: State): State {
         return state.copy(connectableStates = this.connectableStates)
     }
@@ -152,7 +154,9 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun retry(name: String) {
-        effects.value = Effect.Retry(name)
+        scope.launch {
+            effects.emit(Effect.Retry(name))
+        }
     }
 
     data class ConnectableState(

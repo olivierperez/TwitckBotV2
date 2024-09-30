@@ -3,6 +3,7 @@ package fr.o80.twitckbot.screen.dashboard
 import androidx.compose.runtime.Composable
 import fr.o80.twitckbot.di.AuthenticatedComponent
 import fr.o80.twitckbot.navigation.Component
+import fr.o80.twitckbot.screen.remembered
 import javax.inject.Inject
 
 class DashboardComponent(
@@ -18,7 +19,7 @@ class DashboardComponent(
 
     @Composable
     override fun render() {
-        Dashboard(viewModel)
+        Dashboard(viewModel.remembered())
     }
 
 }

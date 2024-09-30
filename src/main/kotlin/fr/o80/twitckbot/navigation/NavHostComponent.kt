@@ -61,8 +61,8 @@ class NavHostComponent(
     }
 
     sealed class ScreenConfig : Parcelable {
-        object Onboarding : ScreenConfig()
-        object Dashboard : ScreenConfig()
+        data object Onboarding : ScreenConfig()
+        data object Dashboard : ScreenConfig()
     }
 }
 
