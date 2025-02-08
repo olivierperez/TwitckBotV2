@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.dagger)
+    alias(libs.plugins.ksp)
 }
 
 group = "fr.o80.twitckbot"

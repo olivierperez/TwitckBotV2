@@ -12,7 +12,7 @@ class CommandParser @Inject constructor() {
         if (!message.matches(regex)) return null
 
         val split = message.split(" ")
-        val tag = split[0].toLowerCase(Locale.FRENCH)
+        val tag = split[0].lowercase(Locale.FRENCH)
         return if (split.size == 1) {
             Command(
                 tag = tag

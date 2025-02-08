@@ -1,10 +1,11 @@
 [versions]
-compose-plugin = "1.6.11"
-dagger = "2.48"
+compose-plugin = "1.7.3"
+dagger = "2.55"
 decompose = "0.8.0"
 httpClient = "4.5.13"
-kotlin = "2.0.20"
+kotlin = "2.1.10"
 ktor = "2.3.12"
+ksp = "2.1.10-1.0.29"
 logback = "1.4.14"
 lwjgl = "3.2.1"
 lwjgl-module = "3.2.1.2"
@@ -15,7 +16,7 @@ slobs = "1.2"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-dagger = { id = "com.google.devtools.ksp", version = "2.0.20-1.0.25" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 [libraries]
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
@@ -40,7 +41,7 @@ pircbot = { module = "pircbot:pircbot", version.ref = "pircbot" }
 
 serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.3" }
 
-slobs = { module = "com.github.olivierperez.KotlinSlobs:lib", version.ref = "slobs" }
+slobs = { group = "com.github.olivierperez.KotlinSlobs", name = "lib", version.ref = "slobs" }
 
 [bundles]
 decompose = ["decomposeBase", "decomposeExtensions"]
