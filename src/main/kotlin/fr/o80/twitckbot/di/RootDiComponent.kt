@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [RootModule::class])
-interface RootComponent {
+interface RootDiComponent {
     fun inject(component: OnboardingComponent)
 
     val authenticatedComponentBuilder: AuthenticatedComponent.Builder

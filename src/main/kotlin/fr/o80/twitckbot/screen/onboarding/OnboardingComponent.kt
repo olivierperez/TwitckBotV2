@@ -6,12 +6,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import fr.o80.twitckbot.data.model.Config
 import fr.o80.twitckbot.data.model.FullAuth
-import fr.o80.twitckbot.di.RootComponent
+import fr.o80.twitckbot.di.RootDiComponent
 import fr.o80.twitckbot.navigation.Component
 import javax.inject.Inject
 
 class OnboardingComponent(
-    rootComponent: RootComponent,
+    rootDiComponent: RootDiComponent,
     private val onAuthentication: (Config) -> Unit
 ) : Component {
 
@@ -19,7 +19,7 @@ class OnboardingComponent(
     lateinit var viewModel: OnboardingViewModel
 
     init {
-        rootComponent.inject(this)
+        rootDiComponent.inject(this)
     }
 
     @Composable

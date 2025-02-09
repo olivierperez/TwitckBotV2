@@ -1,7 +1,7 @@
 [versions]
 compose-plugin = "1.7.3"
 dagger = "2.55"
-decompose = "0.8.0"
+decompose = "3.2.2"
 httpClient = "4.5.13"
 kotlin = "2.1.10"
 ktor = "2.3.12"
@@ -22,8 +22,8 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 
-decomposeBase = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
-decomposeExtensions = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
+decomposeBase = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
+decomposeExtensions = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
 
 ktor-serverCore = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-serverNetty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
